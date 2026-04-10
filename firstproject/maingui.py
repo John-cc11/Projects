@@ -1,12 +1,35 @@
-from tkinter import *
-import customtkinter
+import customtkinter as ctk
 
 
-window = Tk()
-window.geometry("420x420")
-window.title("library")
+ctk.set_appearance_mode("dark")      
+ctk.set_default_color_theme("blue")   
 
 
-window.config(background="black")
+class App(ctk.CTk):
+    def __init__(self):
+        super().__init__()
 
-window.mainloop()
+      
+        self.title("Library Management System")
+        self.geometry("1000x600")  
+        self.minsize(800, 500)
+
+       
+        self.resizable(True, True)
+
+     
+        self.main_frame = ctk.CTkFrame(self, corner_radius=0)
+        self.main_frame.pack(fill="both", expand=True)
+
+        
+        self.label = ctk.CTkLabel(
+            self.main_frame,
+            text="Welcome to Library System",
+            font=("Arial", 24)
+        )
+        self.label.pack(pady=40)
+
+
+
+app = App()
+app.mainloop()
