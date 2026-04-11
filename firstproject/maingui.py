@@ -25,32 +25,26 @@ class App(ctk.CTk):
         self.sidebar = ctk.CTkFrame(self.main_frame, width=200, corner_radius=0)
         self.sidebar.pack(side = "left", fill = "y")
         
-        self.dashboard_btn  = ctk.CTkButton(self.sidebar, text="Dashboard", width=180)
-        self.books_btn  = ctk.CTkButton(self.sidebar, text="Books", width=180)
-        self.users_btn  = ctk.CTkButton(self.sidebar, text="Users", width=180)
-        self.borrowing_btn  = ctk.CTkButton(self.sidebar, text="Borrowing", width=180)
-        self.records_btn  = ctk.CTkButton(self.sidebar, text="Reports", width=180)
-        self.settings_btn  = ctk.CTkButton(self.sidebar, text="Setting", width=180)
-        self.sign_out_btn = ctk.CTkButton(self.sidebar, text="Sign Out", width=180)
-
-
-
+       
+    
         #====================== Content  ============
 
-        self.content = ctk.CTkFrame(self.main_frame, corner_radius= 0)
+        self.content = ctk.CTkFrame(self.main_frame, corner_radius= 0,fg_color="#18181B")
         self.content.pack(side ="left", fill="both", expand=True)
 
-        self.side_label = ctk.CTkLabel(self.sidebar, text="MENU")
+        self.side_label = ctk.CTkLabel(self.sidebar,fg_color="transparent", text="MENU")
         self.side_label.pack(pady=20)
 
+         
+        sidebar_text = ["Dashboard", "Books", "Users", "Borrowing", "Reports", "Setting", "Sign Out"]
+        self.sidebar_buttons = []
 
-        self.dashboard_btn.pack(pady=10, padx=10)
-        self.books_btn.pack(pady=10, padx=10)
-        self.users_btn.pack(pady=10, padx=10)
-        self.borrowing_btn.pack(pady=10, padx=10)
-        self.records_btn.pack(pady=10, padx=10)
-        self.settings_btn.pack(pady=10, padx=10)
-        self.sign_out_btn.pack(pady=10, padx=10)
+        for text in sidebar_text:
+            btn = ctk.CTkButton(self.sidebar,text=text,width=180,fg_color="transparent")
+            btn.pack(pady=12, padx=10)
+
+            self.sidebar_buttons.append(btn)
+        
 
 
         self.main_label = ctk.CTkLabel(self.content, text="Dashboard", font=("Arial", 24))
