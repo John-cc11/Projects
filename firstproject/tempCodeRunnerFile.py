@@ -1,1 +1,1 @@
-,fg_color="#18181B"
+sidebar
