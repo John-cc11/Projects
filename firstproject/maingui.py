@@ -34,15 +34,13 @@ class App(ctk.CTk):
         self.main_frame.grid_rowconfigure(0, weight=1)
         #====================== sidebar ============
 
-        self.sidebar = ctk.CTkFrame(self.main_frame, width=200, corner_radius=0)
-        self.sidebar.grid(row=0, column=0, sticky="ns")
+        self.sidebar = ctk.CTkFrame(self.main_frame, width=60,corner_radius=0)
+        self.sidebar.grid(row=0, column=0,sticky="ns")
+        self.sidebar.grid_rowconfigure(1, minsize=55)
+        self.sidebar.grid_propagate(False)
 
-        self.sidebar_width = 180
-        self.collapsed_width = 60
+        self.main_frame.grid_columnconfigure(0, weight=0, minsize=60)
 
-        self.animating = False
-        self.sidebar_expanded = False
-        
        
     
         #====================== Content  ============
@@ -53,19 +51,30 @@ class App(ctk.CTk):
         
 
         #===================== sidebar menu ================
+
+        self.sidebar_logo = ctk.CTkLabel(
+            self.sidebar,
+            text="📚      Library",
+            compound="left",
+            font=("Segoe UI", 20, "bold"),
+            width=180,
+            fg_color="transparent"
+
+        )
+       
         self.sidebar_buttons = []
         self.sidebar_icons = []
 
         sidebar_items = [
-            ("Dashboard", "dashboard.png"),
-            ("Books", "books.png"),
-            ("Users", "Users.png"),
-            ("Borrow", "borrow.png"),
-            ("Reports", "reports.png"),
+            ("   Dashboard", "dashboard.png"),
+            ("   Books", "books.png"),
+            ("   Users", "Users.png"),
+            ("   Borrow", "borrow.png"),
+            ("   Reports", "reports.png"),
             ("Settings", "settings.png")
         ]
 
-        for i, (name, icon_file) in enumerate(sidebar_items, start=1):
+        for i, (name, icon_file) in enumerate(sidebar_items, start=4):
 
             icon = load_icon(icon_file)
             self.sidebar_icons.append(icon)
@@ -76,18 +85,18 @@ class App(ctk.CTk):
                 image=icon,
                 compound="left",
                 anchor="w",
-                width=180,
                 fg_color="transparent",
-                font=("sans-serif", 18)
+                font=("Segoe UI", 18)
             )
 
-            btn.grid(row=i, column=0, pady=8, padx=10, sticky="ew")
+            btn.grid(row=i, column=0, pady=15, padx=20)
             self.sidebar_buttons.append((btn, name))
         
 
-
-        self.main_label = ctk.CTkLabel(self.content, text="Dashboard", font=("Arial", 24))
+        self.sidebar_logo.grid(row=0, column=0, pady=(30, 15),sticky="w")
+        self.main_label = ctk.CTkLabel(self.content, text="Dashboard", font=("Segoe UI", 24))
         self.main_label.grid(pady=40)
+
        
 
 
