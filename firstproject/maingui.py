@@ -101,46 +101,49 @@ class App(ctk.CTk):
 
 
 
-        #====================== Content  ============
+        #====================== dashboard_content  ============
 
-        self.content = ctk.CTkFrame(self.main_frame, corner_radius= 0,fg_color="#FFFFFF")
-        self.content.grid(row=0, column=1, sticky="nsew")
-
-        box1 = ctk.CTkFrame(
-            self.content,
-            width=380,
-            height=120,
-            corner_radius=15,
-            fg_color="#F3F4F6"
-                            )
+        self.dashboard_content = ctk.CTkFrame(self.main_frame, corner_radius= 0,fg_color="#FFFFFF")
         
-        box2 = ctk.CTkFrame(
-            self.content,
-            width=380,
-            height=120,
-            corner_radius=15,
-            fg_color="#E5E7EB"
-                            )
-
-
-        self.dash_label = ctk.CTkLabel(
-            self.content,
-            text="Dashboard",
-            text_color="#111827",
-            font=("Segoe UI", 24, "bold"))
-        
-
-        
-        self.dash_label.grid(row=0, column=0, columnspan=5, pady=40, sticky="new" )
-        box1.grid(row=2, column=1, padx=30, pady=20)
-        box1.grid_propagate(False)
-
-        box2.grid(row=2, column=4, padx=30, pady=20)
-        box2.grid_propagate(False)
-
+        self.dashboard_content.grid(row=0, column=1, sticky="nsew")
+        self.dashboard_content.grid_columnconfigure((0,1,2,3), weight=1)
+        self.dashboard_content.grid_rowconfigure((0,1,2,3), weight=1)
        
+        self.dashboard_label = ctk.CTkLabel(
+            self.dashboard_content,
+            text_color="#111827",
+            text="Dashboard", 
+            font=("Segoe UI", 40, "bold"))
 
 
+        self.dashboard_label.grid(row=0, column=0, columnspan=4,sticky="n", pady=(20, 10))
+
+        #==================== dashbaord boxes ==============
+
+        for i in range(4):
+            self.dashboard_content.grid_columnconfigure(i, weight=1)
+
+        for i in range(3):
+            self.dashboard_content.grid_columnconfigure(i, weight=1)
+
+
+
+        self.box1 = ctk.CTkFrame(self.dashboard_content, fg_color="#F87171", corner_radius=15)
+        self.box2 = ctk.CTkFrame(self.dashboard_content, fg_color="#60A5FA", corner_radius=15)
+        self.box3 = ctk.CTkFrame(self.dashboard_content, fg_color="#34D399", corner_radius=15)
+        self.box4 = ctk.CTkFrame(self.dashboard_content, fg_color="#FBBF24", corner_radius=15)
+        self.box5 = ctk.CTkFrame(self.dashboard_content, fg_color="#A78BFA", corner_radius=15)
+
+        # small boxes
+        self.box1.grid(row=2, column=0, padx=20, pady=20, sticky="nsew")
+        self.box2.grid(row=2, column=1, padx=20, pady=20, sticky="nsew")
+        self.box3.grid(row=2, column=2, padx=20, pady=20, sticky="nsew")
+
+        # wide box
+        self.box4.grid(row=1, column=0, columnspan=3, padx=20, pady=20, sticky="nsew")
+
+        # tall box
+        self.box5.grid(row=1, column=3, rowspan=2, padx=20, pady=20, sticky="nsew")
 
 app = App()
 app.mainloop()
