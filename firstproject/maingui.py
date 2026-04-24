@@ -119,31 +119,35 @@ class App(ctk.CTk):
         self.dashboard_label.grid(row=0, column=0, columnspan=4,sticky="n", pady=(20, 10))
 
         #==================== dashbaord boxes ==============
+        boxes = [
+        {"color": "#F87171", "row": 2, "col": 0},
+        {"color": "#60A5FA", "row": 2, "col": 1},
+        {"color": "#34D399", "row": 2, "col": 2},
+        {"color": "#FBBF24", "row": 1, "col": 0, "columnspan": 3},
+        {"color": "#A78BFA", "row": 1, "col": 3, "rowspan": 2},
+                ]
+        
 
-        for i in range(4):
-            self.dashboard_content.grid_columnconfigure(i, weight=1)
+        self.boxes = []
 
-        for i in range(3):
-            self.dashboard_content.grid_columnconfigure(i, weight=1)
+        for b in boxes:
+            box = ctk.CTkFrame(
+            self.dashboard_content,
+            fg_color=b["color"],
+            corner_radius = 15
+            )
 
+            box.grid(
+                row=b["row"],
+                column=b["col"],
+                rowspan=b.get("rowspan", 1),
+                columnspan=b.get("columnspan", 1),
+                padx=20,
+                pady=20,
+                sticky="nsew"
+            )
+            self.boxes.append(box)
 
-
-        self.box1 = ctk.CTkFrame(self.dashboard_content, fg_color="#F87171", corner_radius=15)
-        self.box2 = ctk.CTkFrame(self.dashboard_content, fg_color="#60A5FA", corner_radius=15)
-        self.box3 = ctk.CTkFrame(self.dashboard_content, fg_color="#34D399", corner_radius=15)
-        self.box4 = ctk.CTkFrame(self.dashboard_content, fg_color="#FBBF24", corner_radius=15)
-        self.box5 = ctk.CTkFrame(self.dashboard_content, fg_color="#A78BFA", corner_radius=15)
-
-        # small boxes
-        self.box1.grid(row=2, column=0, padx=20, pady=20, sticky="nsew")
-        self.box2.grid(row=2, column=1, padx=20, pady=20, sticky="nsew")
-        self.box3.grid(row=2, column=2, padx=20, pady=20, sticky="nsew")
-
-        # wide box
-        self.box4.grid(row=1, column=0, columnspan=3, padx=20, pady=20, sticky="nsew")
-
-        # tall box
-        self.box5.grid(row=1, column=3, rowspan=2, padx=20, pady=20, sticky="nsew")
 
 app = App()
 app.mainloop()
