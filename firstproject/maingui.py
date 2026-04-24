@@ -131,22 +131,40 @@ class App(ctk.CTk):
         self.boxes = []
 
         for b in boxes:
-            box = ctk.CTkFrame(
+            shadow = ctk.CTkFrame(
             self.dashboard_content,
-            fg_color=b["color"],
-            corner_radius = 15
+            fg_color="#E5E7EB",
+            corner_radius = 20
             )
 
-            box.grid(
+            shadow.grid(
                 row=b["row"],
                 column=b["col"],
                 rowspan=b.get("rowspan", 1),
                 columnspan=b.get("columnspan", 1),
-                padx=20,
+                padx=24,
                 pady=20,
                 sticky="nsew"
             )
-            self.boxes.append(box)
+            card = ctk.CTkFrame(
+                shadow,
+                fg_color="#FFFFFF",
+                height = 6,
+                corner_radius=10
+            )
+
+            card.place(relx=0, rely=0, relwidth=1, relheight=1)
+
+            
+            accent = ctk.CTkFrame(
+                card,
+                fg_color=b["color"],
+                height=10,
+                corner_radius=10
+            )
+            accent.pack(fill="x", padx=15, pady=(10, 5))
+
+            self.boxes.append(card)
 
 
 app = App()
