@@ -12,17 +12,22 @@ ASSETS = BASE_DIR / "images/sidebar_images"
 def load_icon(filename, size=(20, 20)):
     return ctk.CTkImage(Image.open(ASSETS / filename), size=size)
 
-
-
 class App(ctk.CTk):
+    #======================== functions
+    def show_page(self, name):
+            if name in self.pages:
+                self.pages[name].tkraise()
+
+
     def __init__(self):
         super().__init__()
 
-      
+
+   
         self.title("Library Management System")
         self.geometry("1000x600")  
         self.minsize(1040, 500)
-
+        #===== default frame ====
      
         self.resizable(True, True)
 
@@ -33,6 +38,33 @@ class App(ctk.CTk):
         self.main_frame.grid_columnconfigure(0, weight=0)
         self.main_frame.grid_columnconfigure(1, weight=1)
         self.main_frame.grid_rowconfigure(0, weight=1)
+
+
+
+
+        #================ frames =============
+
+        self.pages_list =  [
+            "dashboard",
+            "books",
+            "users",
+            "borrow",
+            "scheduling",
+            "settings"
+        ]
+        self.pages = {}
+
+        for name in self.pages_list:
+            frame = ctk.CTkFrame(self.main_frame, corner_radius= 0,fg_color="#FFFFFF")
+            frame.grid(row=0, column=1, sticky="nsew")
+            
+            frame.grid_columnconfigure((0,1,2,3), weight=1)
+            frame.grid_rowconfigure((0,1,2,3), weight=1)
+            self.pages[name] = frame
+
+        #=========== functionssss =============
+        self.pages["dashboard"].tkraise()
+
         #====================== sidebar ============
 
         self.sidebar = ctk.CTkFrame(self.main_frame,fg_color="#F3F4F6", width=180,corner_radius=0)
@@ -42,12 +74,9 @@ class App(ctk.CTk):
 
         self.main_frame.grid_columnconfigure(0, weight=0, minsize=60)
         
+        
        
-
         #===================== sidebar menu ================
-
-       
-
 
 
         self.sidebar_logo = ctk.CTkLabel(
@@ -64,16 +93,18 @@ class App(ctk.CTk):
         self.sidebar_buttons = []
         self.sidebar_icons = []
 
+        
+
         sidebar_items = [
-            ("   Dashboard", "dashboard.png"),
-            ("   Books", "books.png"),
-            ("   Users", "Users.png"),
-            ("   Borrow", "borrow.png"),
-            ("   Reports", "reports.png"),
-            ("   Settings", "settings.png")
+            ("   Dashboard", "dashboard.png", "dashboard"),
+            ("   Books", "books.png", "books"),
+            ("   Users", "Users.png", "users"),
+            ("   Borrow", "borrow.png", "borrow"),
+            ("   Scheduling", "reports.png", "scheduling"),
+            ("   Settings", "settings.png", "settings")
         ]
 
-        for i, (name, icon_file) in enumerate(sidebar_items, start=4):
+        for i, (name, icon_file, key) in enumerate(sidebar_items, start=4):
 
             icon = load_icon(icon_file)
             self.sidebar_icons.append(icon)
@@ -88,6 +119,7 @@ class App(ctk.CTk):
                 hover_color="#E5E7EB",
                 text_color="#111827",
                 font=("Segoe UI", 18),
+                command=lambda k=key: self.show_page(k)
             )
     
 
@@ -98,26 +130,19 @@ class App(ctk.CTk):
         self.sidebar_logo.grid(row=0, column=0, pady=(30, 15),sticky="w")
       
         
+   
+        #====================== Contents  ============
 
-
-
-        #====================== dashboard_content  ============
-
-        self.dashboard_content = ctk.CTkFrame(self.main_frame, corner_radius= 0,fg_color="#FFFFFF")
-        
-        self.dashboard_content.grid(row=0, column=1, sticky="nsew")
-        self.dashboard_content.grid_columnconfigure((0,1,2,3), weight=1)
-        self.dashboard_content.grid_rowconfigure((0,1,2,3), weight=1)
        
+        #======================= Dashboard Content =============== 
         self.dashboard_label = ctk.CTkLabel(
-            self.dashboard_content,
+            self.pages["dashboard"],
             text_color="#111827",
             text="Dashboard", 
-            font=("Segoe UI", 40, "bold"))
+            font=("Segoe UI", 28, "bold"))
 
 
-        self.dashboard_label.grid(row=0, column=0, columnspan=4,sticky="n", pady=(20, 10))
-
+        self.dashboard_label.grid(row=0, column=0, columnspan=4, sticky="n", pady=(20, 10))
         #==================== dashbaord boxes ==============
         boxes = [
         {"color": "#F87171", "row": 2, "col": 0},
@@ -132,7 +157,7 @@ class App(ctk.CTk):
 
         for b in boxes:
             shadow = ctk.CTkFrame(
-            self.dashboard_content,
+            self.pages["dashboard"],
             fg_color="#E5E7EB",
             corner_radius = 20
             )
@@ -142,14 +167,13 @@ class App(ctk.CTk):
                 column=b["col"],
                 rowspan=b.get("rowspan", 1),
                 columnspan=b.get("columnspan", 1),
-                padx=24,
+                padx=22,
                 pady=20,
                 sticky="nsew"
             )
             card = ctk.CTkFrame(
                 shadow,
-                fg_color="#FFFFFF",
-                height = 6,
+                fg_color="#F9FAFB",
                 corner_radius=10
             )
 
@@ -165,6 +189,10 @@ class App(ctk.CTk):
             accent.pack(fill="x", padx=15, pady=(10, 5))
 
             self.boxes.append(card)
+
+
+
+#===============================Scheduling 
 
 
 app = App()
