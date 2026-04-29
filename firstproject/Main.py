@@ -1,6 +1,8 @@
 import customtkinter as ctk
 from pathlib import Path
 from PIL import Image
+from Schedule import SchedulingPage
+
 
 ctk.set_appearance_mode("dark")      
 ctk.set_default_color_theme("blue")   
@@ -43,26 +45,25 @@ class App(ctk.CTk):
 
 
         #================ frames =============
-
-        self.pages_list =  [
-            "dashboard",
-            "books",
-            "users",
-            "borrow",
-            "scheduling",
-            "settings"
-        ]
+        self.pages_list = {
+            "dashboard": lambda parent: ctk.CTkFrame(parent, fg_color="#FFFFFF"),
+            "books": lambda parent: ctk.CTkFrame(parent, fg_color="#FFFFFF"),
+            "users": lambda parent: ctk.CTkFrame(parent, fg_color="#FFFFFF"),
+            "borrow": lambda parent: ctk.CTkFrame(parent, fg_color="#FFFFFF"),
+            "scheduling": lambda parent: SchedulingPage(parent).frame,
+            "settings": lambda parent: ctk.CTkFrame(parent, fg_color="#FFFFFF"),
+        }
         self.pages = {}
 
-        for name in self.pages_list:
-            frame = ctk.CTkFrame(self.main_frame, corner_radius= 0,fg_color="#FFFFFF")
-            frame.grid(row=0, column=1, sticky="nsew")
-            
-            frame.grid_columnconfigure((0,1,2,3), weight=1)
-            frame.grid_rowconfigure((0,1,2,3), weight=1)
+        for name, builder in self.pages_list.items():
+            frame = builder(self.main_frame)   
             self.pages[name] = frame
 
         #=========== functionssss =============
+        
+        self.pages["dashboard"].grid_columnconfigure((0,1,2,3), weight=1)
+        self.pages["dashboard"].grid_rowconfigure((0,1,2,3), weight=1)
+        self.pages["dashboard"].grid(row=0, column=1, sticky="nsew")
         self.pages["dashboard"].tkraise()
 
         #====================== sidebar ============
@@ -89,7 +90,7 @@ class App(ctk.CTk):
             fg_color="transparent",
 
         )
-       
+
         self.sidebar_buttons = []
         self.sidebar_icons = []
 
@@ -127,12 +128,12 @@ class App(ctk.CTk):
             self.sidebar_buttons.append((btn, name))
         
 
-        self.sidebar_logo.grid(row=0, column=0, pady=(30, 15),sticky="w")
+        self.sidebar_logo.grid(row=0, column=0,sticky="w")
       
         
    
         #====================== Contents  ============
-
+        
        
         #======================= Dashboard Content =============== 
         self.dashboard_label = ctk.CTkLabel(
@@ -142,7 +143,7 @@ class App(ctk.CTk):
             font=("Segoe UI", 28, "bold"))
 
 
-        self.dashboard_label.grid(row=0, column=0, columnspan=4, sticky="n", pady=(20, 10))
+        self.dashboard_label.grid(row=0, column=0,sticky="n", pady=(20, 10))
         #==================== dashbaord boxes ==============
         boxes = [
         {"color": "#F87171", "row": 2, "col": 0},
@@ -191,8 +192,6 @@ class App(ctk.CTk):
             self.boxes.append(card)
 
 
-
-#===============================Scheduling 
 
 
 app = App()
