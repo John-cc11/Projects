@@ -4,7 +4,6 @@ from datetime import datetime
 
 
 
-
 #===============================Scheduling 
 
 class SchedulingPage:
@@ -67,6 +66,8 @@ class SchedulingPage:
                )
                accent.grid(row=0, column=0, columnspan=7, sticky="ew", padx=15, pady=(10, 5))
                self.boxes[b["name"]] = card
+
+
 #====================== calendar 
          calendar_frame = self.boxes["calendar"]
          calendar_frame.grid_rowconfigure((0,1,2,3,4,5,6,7,8,9), weight=1)
@@ -97,20 +98,22 @@ class SchedulingPage:
             lbl.grid(row=1, column=col, pady=5)
 
 
-         cal = calendar.monthcalendar(self.current_year, self.current_month)
+         cal = calendar.Calendar()
+         month_days = cal.monthdatescalendar(self.current_year, self.current_month)
 
 
-         for row, week in enumerate(cal, start=2):
+         for row, week in enumerate(month_days, start=2):
              for col, day in enumerate(week):
-                  if day == 0:
-                     continue
+                  
+                  is_current = (day.month == self.current_month)
+
                   btn = ctk.CTkButton(
                      calendar_frame,
-                     text=str(day),
+                     text=str(day.day),
                      width=40,
                      height=40,
-                     fg_color="#F3F4F6",
-                     text_color="#111827",
+                     fg_color="#F3F4F6" if is_current else "#E5E7EB",
+                     text_color="#111827" if is_current else "#9CA3AF",
                      hover_color="#E5E7EB",
                      corner_radius=10
                                  )
