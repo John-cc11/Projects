@@ -76,14 +76,25 @@ class SchedulingPage:
          self.current_year = datetime.now().year
          self.current_month = datetime.now().month
          
+#=================================== month drop down 
+         self.month_var = ctk.StringVar(value=calendar.month_name[self.current_month])
+         self.year_var = ctk.StringVar(value=str(self.current_year))
 
-         self.header = ctk.CTkLabel(
+         month_menu = ctk.CTkOptionMenu(
               calendar_frame,
-              text=f"{calendar.month_name[self.current_month]} {self.current_year}",
-              font=("Segoe UI", 20, "bold"),
-              text_color="#180b0b"
+              values=list(calendar.month_name)[1:],
+              variable=self.month_var
          )
-         self.header.grid(row=0, column=0, columnspan=7, pady=10)
+         month_menu.grid(row=0, column=2, padx=5, pady=10)
+
+         year_menu = ctk.CTkOptionMenu(
+              calendar_frame,
+              values=[ str(y) for y in range(2000, 2101)],
+              variable=self.year_var
+
+         )
+
+         year_menu.grid(row=0, column=3, padx=5, pady=10)
 
          days = ["Mon", "Tue", "Wed", "Thu" , "Fri", "Sat", "Sun"]
 
@@ -120,7 +131,8 @@ class SchedulingPage:
                
                   btn.grid(row=row, column=col, padx=5, pady=5, sticky="nsew")
 
-
+#======================= <> bar 
+      
             
          
 
