@@ -87,11 +87,11 @@ class SchedulingPage:
          )
          month_menu.grid(row=0, column=2, padx=5, pady=10)
 
-         year_menu = ctk.CTkOptionMenu(
-              calendar_frame,
-              values=[ str(y) for y in range(2000, 2101)],
-              variable=self.year_var
-
+         year_menu = ctk.CTkComboBox(
+               calendar_frame,
+               values=[ str(y) for y in range(2000, 2101)],
+               variable=self.year_var,
+               width=80
          )
 
          year_menu.grid(row=0, column=3, padx=5, pady=10)
