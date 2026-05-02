@@ -4,6 +4,7 @@ from datetime import datetime
 
 
 
+
 #===============================Scheduling 
 
 class SchedulingPage:
@@ -58,14 +59,9 @@ class SchedulingPage:
                )
                card.grid(row=0, column=0, sticky="nsew")
 
-               accent = ctk.CTkFrame(
-                  card,
-                  fg_color=b["color"],
-                  height=10,
-                  corner_radius=10
-               )
-               accent.grid(row=0, column=0, columnspan=7, sticky="ew", padx=15, pady=(10, 5))
+
                self.boxes[b["name"]] = card
+
 
 
 #====================== calendar 
@@ -75,26 +71,38 @@ class SchedulingPage:
          
          self.current_year = datetime.now().year
          self.current_month = datetime.now().month
+
+
          
 #=================================== month drop down 
+         header_frame = ctk.CTkFrame(calendar_frame, fg_color="transparent")
+         header_frame.grid(row=0, column=0, columnspan=7, pady=10, sticky="w")
+         header_frame.grid_columnconfigure(0, weight=0)
+         header_frame.grid_columnconfigure(1, weight=0)
+        
+
          self.month_var = ctk.StringVar(value=calendar.month_name[self.current_month])
          self.year_var = ctk.StringVar(value=str(self.current_year))
 
          month_menu = ctk.CTkOptionMenu(
-              calendar_frame,
+              header_frame,
               values=list(calendar.month_name)[1:],
-              variable=self.month_var
+              variable=self.month_var,
+              
+              
          )
-         month_menu.grid(row=0, column=2, padx=5, pady=10)
+         month_menu.grid(row=0, column=0, padx=5, pady=10)
 
-         year_menu = ctk.CTkComboBox(
-               calendar_frame,
-               values=[ str(y) for y in range(2000, 2101)],
+         year_menu = ctk.CTkOptionMenu(
+               header_frame,
+               values=[str(y) for y in range(self.current_year - 5, self.current_year + 6)],
                variable=self.year_var,
-               width=80
+               width=80,
+            
+               
          )
 
-         year_menu.grid(row=0, column=3, padx=5, pady=10)
+         year_menu.grid(row=0, column=1, padx=5, pady=10)
 
          days = ["Mon", "Tue", "Wed", "Thu" , "Fri", "Sat", "Sun"]
 
