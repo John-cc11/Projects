@@ -16,7 +16,7 @@ class SchedulingPage:
          self.frame.grid_rowconfigure((0,1,2,3,4,5,6), weight=1)
 
    
-
+         self.day_buttons = {}
          self.boxes = {}
          self.today = datetime.now().date()
 
@@ -128,26 +128,19 @@ class SchedulingPage:
          cal = calendar.Calendar()
          month_days = cal.monthdatescalendar(self.current_year, self.current_month)
 
-
          for row, week in enumerate(month_days, start=2):
-             for col, day in enumerate(week):
-                  
-                  is_today = (day == self.today)
-                  is_current = (day.month == self.current_month)
+            for col, day in enumerate(week):
 
-                  if is_today:
-                     fg_color = "#3B82F6"
-                     text_color = "white"
+               is_current = (day.month == self.current_month)
 
-                  elif is_current:
-                        fg_color = "#F3F4F6"
-                        text_color = "#111827"
+               if is_current:
+                     fg_color = "#F3F4F6"
+                     text_color = "#111827"
+               else:
+                     fg_color = "#E5E7EB"
+                     text_color = "#9CA3AF"
 
-                  else:
-                        fg_color = "#E5E7EB"
-                        text_color = "#9CA3AF"
-
-                  btn = ctk.CTkButton(
+               btn = ctk.CTkButton(
                      self.calendar_frame,
                      text=str(day.day),
                      width=40,
@@ -157,9 +150,12 @@ class SchedulingPage:
                      hover_color="#E5E7EB",
                      corner_radius=10,
                      anchor="nw"
-                                 )
-               
-                  btn.grid(row=row, column=col, padx=5, pady=5, sticky="nsew")
+               )
+
+               btn.grid(row=row, column=col, padx=5, pady=5, sticky="nsew")
+
+               self.day_buttons[(row, col)] = btn
+                  
    
    def change_date(self, value):
 
@@ -170,13 +166,9 @@ class SchedulingPage:
       self.current_year = int(
          self.year_var.get()
     )
-      self.calendar_frame.after(
-          50, 
-          self.update_calendar
-    )
+      self.calendar_frame.after(50, self.update_calendar)
 
-     
-
+  
    def refresh_today(self):
     self.today = datetime.now().date()
 
@@ -185,11 +177,12 @@ class SchedulingPage:
 
       self.refresh_today()
 
-      for widget in self.calendar_frame.winfo_children():
-        info = widget.grid_info()
-        if int(info["row"]) >= 2:
-            widget.destroy()
-
+      for key, btn in self.day_buttons.items():
+        btn.configure(
+            text="",
+            fg_color="#E5E7EB",
+            text_color="#9CA3AF"
+        )
 
       cal = calendar.Calendar()
       month_days = cal.monthdatescalendar(
@@ -199,20 +192,31 @@ class SchedulingPage:
       for row, week in enumerate(month_days, start=2):
         for col, day in enumerate(week):
 
+
+            btn = self.day_buttons.get((row, col))
+            if not btn:
+                continue
+
+            is_today = (day == self.today)
             is_current = (day.month == self.current_month)
 
-            btn = ctk.CTkButton(
-                self.calendar_frame,
-                text=str(day.day),
-                width=40,
-                height=40,
-                fg_color="#F3F4F6" if is_current else "#E5E7EB",
-                text_color="#111827" if is_current else "#9CA3AF",
-                hover_color="#E5E7EB",
-                corner_radius=10
-            )
+            if is_today:
+                fg_color = "#3B82F6"
+                text_color = "white"
 
-            btn.grid(row=row, column=col, padx=5, pady=5, sticky="nsew")
+            elif is_current:
+                fg_color = "#F3F4F6"
+                text_color = "#111827"
+
+            else:
+                fg_color = "#E5E7EB"
+                text_color = "#9CA3AF"
+
+            btn.configure(
+                text=str(day.day),
+                fg_color=fg_color,
+                text_color=text_color
+            )
 
 
 
