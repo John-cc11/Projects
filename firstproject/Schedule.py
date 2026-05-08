@@ -15,7 +15,10 @@ class SchedulingPage:
          self.frame.grid_columnconfigure((0,1,2,3,4,5,6), weight=1)
          self.frame.grid_rowconfigure((0,1,2,3,4,5,6), weight=1)
 
+   
+
          self.boxes = {}
+         self.today = datetime.now().date()
 
          self.Scheduling_label = ctk.CTkLabel(
             self.frame,
@@ -65,17 +68,20 @@ class SchedulingPage:
 
 
 #====================== calendar 
-         calendar_frame = self.boxes["calendar"]
-         calendar_frame.grid_rowconfigure((0,1,2,3,4,5,6,7,8,9), weight=1)
-         calendar_frame.grid_columnconfigure((0,1,2,3,4,5,6), weight=1)
+
+   
+
+         self.calendar_frame = self.boxes["calendar"]
+         self.calendar_frame.grid_rowconfigure((0,1,2,3,4,5,6,7,8,9), weight=1)
+         self.calendar_frame.grid_columnconfigure((0,1,2,3,4,5,6), weight=1)
          
          self.current_year = datetime.now().year
          self.current_month = datetime.now().month
 
-
+   
          
 #=================================== month drop down 
-         header_frame = ctk.CTkFrame(calendar_frame, fg_color="transparent")
+         header_frame = ctk.CTkFrame(self.calendar_frame, fg_color="transparent")
          header_frame.grid(row=0, column=0, columnspan=7, pady=10, sticky="w")
          header_frame.grid_columnconfigure(0, weight=0)
          header_frame.grid_columnconfigure(1, weight=0)
@@ -88,6 +94,7 @@ class SchedulingPage:
               header_frame,
               values=list(calendar.month_name)[1:],
               variable=self.month_var,
+              command=self.change_date
               
               
          )
@@ -98,6 +105,7 @@ class SchedulingPage:
                values=[str(y) for y in range(self.current_year - 5, self.current_year + 6)],
                variable=self.year_var,
                width=80,
+               command=self.change_date
             
                
          )
@@ -108,7 +116,7 @@ class SchedulingPage:
 
          for col, day in enumerate(days):
             lbl = ctk.CTkLabel(
-                calendar_frame,
+                self.calendar_frame,
                 text= day,
                 font=("Segoe UI", 12, "bold")
 
@@ -124,20 +132,89 @@ class SchedulingPage:
          for row, week in enumerate(month_days, start=2):
              for col, day in enumerate(week):
                   
+                  is_today = (day == self.today)
                   is_current = (day.month == self.current_month)
 
+                  if is_today:
+                     fg_color = "#3B82F6"
+                     text_color = "white"
+
+                  elif is_current:
+                        fg_color = "#F3F4F6"
+                        text_color = "#111827"
+
+                  else:
+                        fg_color = "#E5E7EB"
+                        text_color = "#9CA3AF"
+
                   btn = ctk.CTkButton(
-                     calendar_frame,
+                     self.calendar_frame,
                      text=str(day.day),
                      width=40,
                      height=40,
-                     fg_color="#F3F4F6" if is_current else "#E5E7EB",
-                     text_color="#111827" if is_current else "#9CA3AF",
+                     fg_color=fg_color,
+                     text_color=text_color,
                      hover_color="#E5E7EB",
-                     corner_radius=10
+                     corner_radius=10,
+                     anchor="nw"
                                  )
                
                   btn.grid(row=row, column=col, padx=5, pady=5, sticky="nsew")
+   
+   def change_date(self, value):
+
+      self.current_month = list(calendar.month_name).index(
+        self.month_var.get()
+    )
+
+      self.current_year = int(
+         self.year_var.get()
+    )
+      self.calendar_frame.after(
+          50, 
+          self.update_calendar
+    )
+
+     
+
+   def refresh_today(self):
+    self.today = datetime.now().date()
+
+
+   def update_calendar(self):
+
+      self.refresh_today()
+
+      for widget in self.calendar_frame.winfo_children():
+        info = widget.grid_info()
+        if int(info["row"]) >= 2:
+            widget.destroy()
+
+
+      cal = calendar.Calendar()
+      month_days = cal.monthdatescalendar(
+          self.current_year, 
+          self.current_month)
+
+      for row, week in enumerate(month_days, start=2):
+        for col, day in enumerate(week):
+
+            is_current = (day.month == self.current_month)
+
+            btn = ctk.CTkButton(
+                self.calendar_frame,
+                text=str(day.day),
+                width=40,
+                height=40,
+                fg_color="#F3F4F6" if is_current else "#E5E7EB",
+                text_color="#111827" if is_current else "#9CA3AF",
+                hover_color="#E5E7EB",
+                corner_radius=10
+            )
+
+            btn.grid(row=row, column=col, padx=5, pady=5, sticky="nsew")
+
+
 
 #======================= <> bar 
       

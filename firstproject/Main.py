@@ -32,6 +32,7 @@ class App(ctk.CTk):
         #===== default frame ====
      
         self.resizable(True, True)
+        
 
      
         self.main_frame = ctk.CTkFrame(self, corner_radius=0)
