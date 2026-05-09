@@ -9,7 +9,8 @@ ctk.set_default_color_theme("blue")
 
 #==================== icons  = ===========================
 BASE_DIR = Path(__file__).parent
-ASSETS = BASE_DIR / "../Assets/images/sidebar_images"
+ASSETS = (BASE_DIR / ".." /"Assets" / "images" /"sidebar_images").resolve()
+
 
 def load_icon(filename, size=(20, 20)):
     return ctk.CTkImage(Image.open(ASSETS / filename), size=size)

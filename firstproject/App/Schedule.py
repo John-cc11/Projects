@@ -155,6 +155,7 @@ class SchedulingPage:
                btn.grid(row=row, column=col, padx=5, pady=5, sticky="nsew")
 
                self.day_buttons[(row, col)] = btn
+               self.update_calendar()
                   
    
    def change_date(self, value):
