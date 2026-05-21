@@ -24,6 +24,9 @@ class SchedulingPage:
          self.boxes = {}
          self.today = datetime.now().date()
 
+         self.preview_frame = None
+         self.hover_after_id = None
+
          self.Scheduling_label = ctk.CTkLabel(
             self.frame,
             text="Scheduling",
@@ -154,10 +157,12 @@ class SchedulingPage:
                      hover_color="#E5E7EB",
                      corner_radius=10,
                      anchor="nw",
-                     command=lambda d=day: self.open_schedule(d)
+                     #command=lambda d=day: self.open_schedule(d)
                )    
 
                btn.grid(row=row, column=col, padx=5, pady=5, sticky="nsew")
+               btn.bind("<Enter>", lambda e, d=day: self.start_hover(e, d))
+               btn.bind("<Leave>", self.hide_preview)
                btn.date = day
                self.day_buttons[(row, col)] = btn
                self.update_calendar()
@@ -223,72 +228,92 @@ class SchedulingPage:
                 fg_color=fg_color,
                 text_color=text_color
             )
-    def open_schedule(self, day):
 
-        if hasattr(self, "editor_frame") and self.editor_frame.winfo_exists():
-            self.editor_frame.destroy()
+    def hide_preview(self, event):
+
+        if self.hover_after_id:
+            self.frame.after_cancel(self.hover_after_id)
+            self.hover_after_id = None
+
+        self.current_hover_day = None
+        self.current_hover_widget = None
+
+        if self.preview_frame and self.preview_frame.winfo_exists():
+            self.preview_frame.destroy()
+            self.preview_frame = None
 
 
-        self.editor_frame = ctk.CTkFrame(
+    def preview_sched(self, event, day):
+
+
+        text = "No schedule yet"
+
+        self.preview_frame = ctk.CTkFrame(
             self.frame,
             fg_color="#FFFFFF",
-            corner_radius=15,
+            corner_radius=12,
             border_width=1,
-            border_color="#E5E7EB",
-            width=220,
-            height=120
+            width=10,
+            height=10
         )
-    # take button position
-        clicked_btn = None
 
-        for btn in self.day_buttons.values():
-            if btn.date == day:
-                clicked_btn = btn
-                break
-        
-        if not clicked_btn:
-            return
-        
-        x = clicked_btn.winfo_rootx() - self.frame.winfo_rootx()
-        y = clicked_btn.winfo_rooty() - self.frame.winfo_rooty()
+        btn = event.widget
 
-        self.editor_frame.place(x=x + 45 , y=y + -10 )
+        x = btn.winfo_rootx() - self.frame.winfo_rootx()
+        y = btn.winfo_rooty() - self.frame.winfo_rooty()
+
+        preview_width = 200
+
+        frame_width = self.frame.winfo_width()
 
 
+        if x + preview_width + 60 > frame_width:
+
+            px = x - preview_width - 10
+        else:
+            
+            px = x + 45
+
+        self.preview_frame.place(x=px, y=y - 10)
 
         title = ctk.CTkLabel(
-        self.editor_frame,
-        text=day.strftime("%B %d"),
-        font=("Segoe UI", 16, "bold"),
-        text_color="#111827"
-    )
+            self.preview_frame,
+            text=day.strftime("%B %d"),
+            font=("Segoe UI", 14, "bold")
+        )
+        title.grid(row=0, column=0, padx=10, pady=(8, 2), sticky="w")
 
-        title.grid(
-            row=0,
-            column=0,
-            padx=15,
-            pady=(10, 5),
-            sticky="w"
+        content = ctk.CTkLabel(
+            self.preview_frame,
+            text=text,
+            wraplength=180,
+            justify="left",
+            text_color="#6B7280"
+        )
+        content.grid(row=1, column=0, padx=10, pady=(0, 10), sticky="w")
+
+
+    def start_hover(self, event, day):
+
+        if self.hover_after_id:
+            self.frame.after_cancel(self.hover_after_id)
+            self.hover_after_id = None
+
+    
+        self.current_hover_day = day
+        self.current_hover_widget = event.widget
+
+    
+        self.hover_after_id = self.frame.after(
+            150,
+            lambda: self._show_preview_safe(event, day)
         )
 
+    def _show_preview_safe(self, event, day):
+        if getattr(self, "current_hover_day", None) != day:
+            return
 
-        text = ctk.CTkLabel(
-        self.editor_frame,
-        text="No schedule yet",
-        font=("Segoe UI", 13),
-        text_color="#6B7280"
-    )
-
-        text.grid(
-            row=1,
-            column=0,
-            padx=15,
-            pady=(0, 10),
-            sticky="w"
-        )
-            
-
-
+        self.preview_sched(event, day)
 
 #======================= <> bar 
       
