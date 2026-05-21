@@ -263,19 +263,28 @@ class SchedulingPage:
         y = btn.winfo_rooty() - self.frame.winfo_rooty()
 
         preview_width = 200
+        preview_height = 90
 
         frame_width = self.frame.winfo_width()
 
+        px = x + (btn.winfo_width() // 2) - (preview_width // 2)
+        py = y - preview_height - 10
 
-        if x + preview_width + 60 > frame_width:
+    
+        if px < 5:
+            px = 5
 
-            px = x - preview_width - 10
-        else:
-            
-            px = x + 45
+     
+        if px + preview_width > frame_width:
+            px = frame_width - preview_width - 5
 
-        self.preview_frame.place(x=px, y=y - 10)
+    
+        if py < 5:
+            py = y + btn.winfo_height() + 10
 
+        self.preview_frame.place(x=px, y=py)
+
+    
         title = ctk.CTkLabel(
             self.preview_frame,
             text=day.strftime("%B %d"),
