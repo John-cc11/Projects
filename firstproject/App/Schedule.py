@@ -1,14 +1,18 @@
 import customtkinter as ctk
 import calendar
 from datetime import datetime
+import sys
+from pathlib import Path
 
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+from Utils.json_shortcut import load_json, add_data,update_data, remove_data
 
-
+data = load_json("sched.json")
 
 #===============================Scheduling 
 
 class SchedulingPage:
-   def __init__(self, parent):
+    def __init__(self, parent):
          self.frame =ctk.CTkFrame(parent, fg_color="#ffffff")
          self.frame.grid(row=0, column=1, sticky="nsew")
 
@@ -149,16 +153,17 @@ class SchedulingPage:
                      text_color=text_color,
                      hover_color="#E5E7EB",
                      corner_radius=10,
-                     anchor="nw"
-               )
+                     anchor="nw",
+                     command=lambda d=day: self.open_schedule(d)
+               )    
 
                btn.grid(row=row, column=col, padx=5, pady=5, sticky="nsew")
-
+               btn.date = day
                self.day_buttons[(row, col)] = btn
                self.update_calendar()
                   
    
-   def change_date(self, value):
+    def change_date(self, value):
 
       self.current_month = list(calendar.month_name).index(
         self.month_var.get()
@@ -170,11 +175,11 @@ class SchedulingPage:
       self.calendar_frame.after(50, self.update_calendar)
 
   
-   def refresh_today(self):
-    self.today = datetime.now().date()
+    def refresh_today(self):
+        self.today = datetime.now().date()
 
 
-   def update_calendar(self):
+    def update_calendar(self):
 
       self.refresh_today()
 
@@ -218,6 +223,70 @@ class SchedulingPage:
                 fg_color=fg_color,
                 text_color=text_color
             )
+    def open_schedule(self, day):
+
+        if hasattr(self, "editor_frame") and self.editor_frame.winfo_exists():
+            self.editor_frame.destroy()
+
+
+        self.editor_frame = ctk.CTkFrame(
+            self.frame,
+            fg_color="#FFFFFF",
+            corner_radius=15,
+            border_width=1,
+            border_color="#E5E7EB",
+            width=220,
+            height=120
+        )
+    # take button position
+        clicked_btn = None
+
+        for btn in self.day_buttons.values():
+            if btn.date == day:
+                clicked_btn = btn
+                break
+        
+        if not clicked_btn:
+            return
+        
+        x = clicked_btn.winfo_rootx() - self.frame.winfo_rootx()
+        y = clicked_btn.winfo_rooty() - self.frame.winfo_rooty()
+
+        self.editor_frame.place(x=x + 45 , y=y + -10 )
+
+
+
+        title = ctk.CTkLabel(
+        self.editor_frame,
+        text=day.strftime("%B %d"),
+        font=("Segoe UI", 16, "bold"),
+        text_color="#111827"
+    )
+
+        title.grid(
+            row=0,
+            column=0,
+            padx=15,
+            pady=(10, 5),
+            sticky="w"
+        )
+
+
+        text = ctk.CTkLabel(
+        self.editor_frame,
+        text="No schedule yet",
+        font=("Segoe UI", 13),
+        text_color="#6B7280"
+    )
+
+        text.grid(
+            row=1,
+            column=0,
+            padx=15,
+            pady=(0, 10),
+            sticky="w"
+        )
+            
 
 
 
