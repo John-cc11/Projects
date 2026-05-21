@@ -32,8 +32,8 @@ class SchedulingPage:
 
          #================ calendar ==========
          sched_boxes = [
-            {"name": "calendar", "color": "#fdc8c8", "row": 1, "col": 0, "columnspan": 7, "rowspan": 6},
-            {"name": "schedule", "color": "#f1d9d9", "row": 1, "col": 7, "columnspan": 1, "rowspan": 6},
+            {"name": "calendar", "color": "#fdc8c8", "row": 1, "col": 2, "columnspan": 7, "rowspan": 6},
+            {"name": "schedule", "color": "#f1d9d9", "row": 1, "col": 0, "columnspan": 2, "rowspan": 6},
         ]
       
 
