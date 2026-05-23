@@ -23,6 +23,8 @@ class SchedulingPage:
          self.day_buttons = {}
          self.boxes = {}
          self.today = datetime.now().date()
+         #for sched window
+         self.schedule_data = data if data else {}
 
          self.preview_frame = None
          self.hover_after_id = None
@@ -157,7 +159,7 @@ class SchedulingPage:
                      hover_color="#E5E7EB",
                      corner_radius=10,
                      anchor="nw",
-                     #command=lambda d=day: self.open_schedule(d)
+                     command=lambda d=day: self.create_schedule(d)
                )    
 
                btn.grid(row=row, column=col, padx=5, pady=5, sticky="nsew")
@@ -167,7 +169,7 @@ class SchedulingPage:
                self.day_buttons[(row, col)] = btn
                self.update_calendar()
                   
-   
+#
     def change_date(self, value):
 
       self.current_month = list(calendar.month_name).index(
@@ -228,7 +230,7 @@ class SchedulingPage:
                 fg_color=fg_color,
                 text_color=text_color
             )
-
+# hide if not hovered
     def hide_preview(self, event):
 
         if self.hover_after_id:
@@ -242,7 +244,7 @@ class SchedulingPage:
             self.preview_frame.destroy()
             self.preview_frame = None
 
-
+## hover / shown sched in date
     def preview_sched(self, event, day):
 
 
@@ -301,7 +303,7 @@ class SchedulingPage:
         )
         content.grid(row=1, column=0, padx=10, pady=(0, 10), sticky="w")
 
-
+# smotth start hover
     def start_hover(self, event, day):
 
         if self.hover_after_id:
@@ -317,12 +319,210 @@ class SchedulingPage:
             150,
             lambda: self._show_preview_safe(event, day)
         )
-
+# 
     def _show_preview_safe(self, event, day):
         if getattr(self, "current_hover_day", None) != day:
             return
 
         self.preview_sched(event, day)
+
+# create schedule window / for schedule window
+
+
+    def create_schedule(self, day):
+
+        self.schedule_window = ctk.CTkFrame(
+            self.frame,
+            fg_color="#FFFFFF",
+            corner_radius=15,
+            border_width=1,
+            border_color="#E5E7EB",
+            width=350,
+            height=300
+        )
+        self.schedule_window.grid(
+        row=2,
+        column=2,
+        columnspan=3,
+        rowspan=3,
+        padx=20,
+        pady=20,
+        sticky="nsew"
+    )
+        self.schedule_window.grid_columnconfigure(0, weight=1)
+        
+        self.schedule_window.grid_rowconfigure(0, weight=0)
+        self.schedule_window.grid_rowconfigure(1, weight=0)
+        self.schedule_window.grid_rowconfigure(2, weight=0)
+        self.schedule_window.grid_rowconfigure(3, weight=0)
+        self.schedule_window.grid_rowconfigure(4, weight=1)
+        self.schedule_window.grid_rowconfigure(5, weight=0) 
+
+        top_frame = ctk.CTkFrame(
+        self.schedule_window,
+        fg_color="transparent"
+    )
+
+        top_frame.grid(
+            row=0,
+            column=0,
+            padx=15,
+            pady=(15, 10),
+            sticky="ew"
+        )
+
+        top_frame.grid_columnconfigure(0, weight=1)
+
+        date_form = ctk.CTkLabel(
+        top_frame,
+        text=day.strftime("%B %d, %Y"),
+        font=("Segoe UI", 20, "bold"),
+        text_color="#111827"
+    )
+
+        date_form.grid(
+            row=0,
+            column=0,
+            sticky="w"
+        )
+#title Entry
+        self.title_entry = ctk.CTkEntry(
+            self.schedule_window,
+            placeholder_text="Title"
+
+        )
+        self.title_entry.grid(
+            row=1,
+            column=0,
+            columnspan=2,
+            padx=15,
+            pady=10,
+            sticky="ew"
+        )   
+# time entry
+        self.time_entry = ctk.CTkEntry(
+        self.schedule_window,
+        placeholder_text="Time (e.g. 3:00 PM)"
+            )
+
+        self.time_entry.grid(
+            row=2,
+            column=0,
+            columnspan=2,
+            padx=15,
+            pady=5,
+            sticky="ew"
+        )
+
+       
+
+# Priority &  category dropdown menu
+        priority = ["Low", "Medium", "High", "Urgent"]
+        category = ["School", "Work", "Personal", "Health", "Finance", "Other"]
+
+        self.priority_var = ctk.StringVar(value=priority[0])
+        self.category_var = ctk.StringVar(value=category[0])
+
+        priority_menu = ctk.CTkComboBox(
+            self.schedule_window,
+            values=priority,
+            variable=self.priority_var,
+            state="readonly",
+            hover=False
+  
+        )
+
+        category_menu = ctk.CTkComboBox(
+            self.schedule_window,
+            values=category,
+            variable=self.category_var,
+            state="readonly",
+            hover=False
+
+        )
+
+        priority_menu.grid(
+            row=3,
+            column=0,
+            padx=(2, 15),
+            pady=5,
+            sticky="w"
+        )
+        category_menu.grid(
+            row=3,
+            column=1,
+            padx=(2, 15),
+            pady=5,
+            sticky="e"
+        )
+                # ================= TEXTBOX =================
+
+
+        
+        self.schedule_textbox = ctk.CTkTextbox(
+                self.schedule_window,
+                fg_color="#F3F4F6",
+                text_color="#000000",
+                corner_radius=12,
+                height=120
+        )
+
+        self.schedule_textbox.grid(
+                row=4,
+                column=0,
+                columnspan=2,
+                padx=15,
+                pady=10,
+                sticky="nsew"
+        )
+        
+
+
+
+
+        # ================= SAVE BUTTON =================
+
+        save_btn = ctk.CTkButton(
+            self.schedule_window,
+            text="Save Schedule",
+            height=45,
+            corner_radius=12,
+            fg_color="#3B82F6",
+            hover_color="#2563EB"
+        )
+
+        save_btn.grid(
+            row=5,
+            column=0,
+            columnspan=4,
+            padx=15,
+            pady=(0, 15),
+            sticky="ew"
+        )
+         # ================= CLOSE BUTTON =================
+
+        close_btn = ctk.CTkButton(
+            top_frame,
+            text="✕",
+            width=35,
+            height=35,
+            corner_radius=10,
+            fg_color="#F3F4F6",
+            hover_color="#E5E7EB",
+            text_color="#111827",
+            command=self.schedule_window.destroy
+        )
+
+        close_btn.grid(
+            row=3,
+            column=1,
+            sticky="e"
+        )
+            
+
+       
+
+
 
 #======================= <> bar 
       
