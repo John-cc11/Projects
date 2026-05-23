@@ -331,6 +331,7 @@ class SchedulingPage:
 
     def create_schedule(self, day):
 
+
         self.schedule_window = ctk.CTkFrame(
             self.frame,
             fg_color="#FFFFFF",
@@ -338,8 +339,11 @@ class SchedulingPage:
             border_width=1,
             border_color="#E5E7EB",
             width=350,
-            height=300
+            height=400
         )
+        
+        self.schedule_window.grid_propagate(False)
+
         self.schedule_window.grid(
         row=2,
         column=2,
@@ -347,9 +351,10 @@ class SchedulingPage:
         rowspan=3,
         padx=20,
         pady=20,
-        sticky="nsew"
+    
     )
         self.schedule_window.grid_columnconfigure(0, weight=1)
+        self.schedule_window.grid_columnconfigure(1, weight=1)
         
         self.schedule_window.grid_rowconfigure(0, weight=0)
         self.schedule_window.grid_rowconfigure(1, weight=0)
@@ -366,18 +371,20 @@ class SchedulingPage:
         top_frame.grid(
             row=0,
             column=0,
+            columnspan=2,
+            sticky="ew",
             padx=15,
-            pady=(15, 10),
-            sticky="ew"
+            pady=(15, 10)
         )
 
         top_frame.grid_columnconfigure(0, weight=1)
-
+       
         date_form = ctk.CTkLabel(
         top_frame,
         text=day.strftime("%B %d, %Y"),
         font=("Segoe UI", 20, "bold"),
-        text_color="#111827"
+        text_color="#111827",
+        width=180
     )
 
         date_form.grid(
@@ -417,8 +424,8 @@ class SchedulingPage:
        
 
 # Priority &  category dropdown menu
-        priority = ["Low", "Medium", "High", "Urgent"]
-        category = ["School", "Work", "Personal", "Health", "Finance", "Other"]
+        priority = ["-- Select Priority --", "Low", "Medium", "High", "Urgent"]
+        category = ["-- Select Category --","School", "Work", "Personal", "Health", "Finance", "Other"]
 
         self.priority_var = ctk.StringVar(value=priority[0])
         self.category_var = ctk.StringVar(value=category[0])
@@ -428,7 +435,8 @@ class SchedulingPage:
             values=priority,
             variable=self.priority_var,
             state="readonly",
-            hover=False
+            hover=False,
+            width=150
   
         )
 
@@ -437,24 +445,28 @@ class SchedulingPage:
             values=category,
             variable=self.category_var,
             state="readonly",
-            hover=False
+            hover=False,
+            width=150
 
         )
 
         priority_menu.grid(
             row=3,
             column=0,
-            padx=(2, 15),
+            padx=(15, 5),
             pady=5,
             sticky="w"
         )
+
         category_menu.grid(
             row=3,
-            column=1,
-            padx=(2, 15),
+            column=0,
+            padx=(180, 15),
+            columnspan=4,
             pady=5,
-            sticky="e"
+            sticky="w"
         )
+        
                 # ================= TEXTBOX =================
 
 
@@ -485,7 +497,7 @@ class SchedulingPage:
         save_btn = ctk.CTkButton(
             self.schedule_window,
             text="Save Schedule",
-            height=45,
+            height=30,
             corner_radius=12,
             fg_color="#3B82F6",
             hover_color="#2563EB"
@@ -506,17 +518,19 @@ class SchedulingPage:
             text="✕",
             width=35,
             height=35,
-            corner_radius=10,
+            corner_radius=10, 
             fg_color="#F3F4F6",
             hover_color="#E5E7EB",
             text_color="#111827",
             command=self.schedule_window.destroy
+
         )
 
         close_btn.grid(
-            row=3,
+            row=0,
             column=1,
-            sticky="e"
+            sticky="e",
+            padx=(0, 5)
         )
             
 
