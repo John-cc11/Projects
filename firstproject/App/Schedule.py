@@ -52,6 +52,10 @@ class SchedulingPage:
                   fg_color="#E5E7EB",
                   corner_radius=20
                )
+               #lock 
+               self.frame.grid_propagate(False)
+
+
                shadow.grid(
                   row=b["row"],
                   column=b["col"],
@@ -341,18 +345,18 @@ class SchedulingPage:
             width=350,
             height=400
         )
-        
+
+
         self.schedule_window.grid_propagate(False)
 
-        self.schedule_window.grid(
-        row=2,
-        column=2,
-        columnspan=3,
-        rowspan=3,
-        padx=20,
-        pady=20,
-    
-    )
+        self.schedule_window.place(
+            relx=0.5,
+            rely=0.5,
+            anchor="center"
+        )
+
+
+
         self.schedule_window.grid_columnconfigure(0, weight=1)
         self.schedule_window.grid_columnconfigure(1, weight=1)
         
