@@ -11,28 +11,6 @@ conn = sqlite3.connect(DATABASE_PATH)
 cursor = conn.cursor()
 
 
-def Add_Schedule(
-      title, content, date, time, priority, category
-):
-   cursor.execute("""
-      INSERT INTO schedule(
-                  title,
-                  content, 
-                  date, 
-                  time, 
-                  priority, 
-                  category
-                  )
-       VALUES (?, ?, ?, ?, ?, ?) """,(
-         title,
-         content, 
-         date, 
-         time, 
-         priority, 
-         category
-       ))
-   
-   conn.commit()
 
 def load_schedule():
    cursor.execute("""SELECT * FROM schedule""")
@@ -40,42 +18,50 @@ def load_schedule():
    return cursor.fetchall()
 
 
-def update_schedule(
-    schedule_id,
-    title,
-    content,
-    date,
-    time,
-    priority,
-    category,
-    completed
+
+def update_schedule( schedule_id, title, content, date, time, priority, category, completed
 ):
 
     cursor.execute("""
     UPDATE schedules
 
     SET
-        title=?,
-        content=?,
-        date=?,
-        time=?,
-        priority=?,
-        category=?,
-        completed=?
+        title=?,content=?,date=?,time=?,priority=?,category=?,completed=?
 
     WHERE id=?
     """, (
-        title,
-        content,
-        date,
-        time,
-        priority,
-        category,
-        completed,
-        schedule_id
+        title, content, date, time, priority, category, completed, schedule_id
     ))
 
     conn.commit()
+
+def create_schedule_db(title, content, date, time, priority, category, completed):
+    cursor.execute("""
+    INSERT INTO schedules (
+        title, content, date, time, priority, category, completed
+    )
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+    """, (title, content, date, time, priority, category, completed))
+
+    conn.commit()
+
+
+
+def save_schedule(schedule_id, title, content, date, time, priority, category, completed):
+
+    if schedule_id is None:
+        # CREATE NEW
+        create_schedule_db(title, content, date, time, priority, category, completed)
+        
+
+    else:
+        # UPDATE EXISTING
+        update_schedule(schedule_id, title, content, date, time, priority, category, completed)
+        
+
+
+
+
 
 
 def delete_schedule(schedule_id):

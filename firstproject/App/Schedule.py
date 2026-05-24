@@ -13,23 +13,20 @@ data = load_json("sched.json")
 
 class SchedulingPage:
     def __init__(self, parent):
-         self.frame =ctk.CTkFrame(parent, fg_color="#ffffff")
-         self.frame.grid(row=0, column=1, sticky="nsew")
+        self.frame =ctk.CTkFrame(parent, fg_color="#ffffff")
+        self.frame.grid(row=0, column=1, sticky="nsew")
 
-         self.frame.grid_columnconfigure((0,1,2,3,4,5,6), weight=1)
-         self.frame.grid_rowconfigure((0,1,2,3,4,5,6), weight=1)
+        self.frame.grid_columnconfigure((0,1,2,3,4,5,6), weight=1)
+        self.frame.grid_rowconfigure((0,1,2,3,4,5,6), weight=1)
 
    
-         self.day_buttons = {}
-         self.boxes = {}
-         self.today = datetime.now().date()
+        self.day_buttons = {}
+        self.boxes = {}
+        self.today = datetime.now().date()
          #for sched window
-         self.schedule_data = data if data else {}
+        self.schedule_data = data if data else {}
 
-         self.preview_frame = None
-         self.hover_after_id = None
-
-         self.Scheduling_label = ctk.CTkLabel(
+        self.Scheduling_label = ctk.CTkLabel(
             self.frame,
             text="Scheduling",
             font=("Segoe UI", 28, "bold"),
@@ -37,16 +34,16 @@ class SchedulingPage:
         )
          
 
-         self.Scheduling_label.grid(row=0, column=0, columnspan=4, sticky="n", pady=(20, 10))
+        self.Scheduling_label.grid(row=0, column=0, columnspan=4, sticky="n", pady=(20, 10))
 
          #================ calendar ==========
-         sched_boxes = [
+        sched_boxes = [
             {"name": "calendar", "color": "#fdc8c8", "row": 1, "col": 2, "columnspan": 7, "rowspan": 6},
             {"name": "schedule", "color": "#f1d9d9", "row": 1, "col": 0, "columnspan": 2, "rowspan": 6},
         ]
       
 
-         for b in sched_boxes:
+        for b in sched_boxes:
                shadow = ctk.CTkFrame(
                   self.frame,  
                   fg_color="#E5E7EB",
@@ -84,64 +81,96 @@ class SchedulingPage:
 
    
 
-         self.calendar_frame = self.boxes["calendar"]
-         self.calendar_frame.grid_rowconfigure((0,1,2,3,4,5,6,7,8,9), weight=1)
-         self.calendar_frame.grid_columnconfigure((0,1,2,3,4,5,6), weight=1)
+        self.calendar_frame = self.boxes["calendar"]
+        self.calendar_frame.grid_rowconfigure((0,1,2,3,4,5,6,7,8,9), weight=1)
+        self.calendar_frame.grid_columnconfigure((0,1,2,3,4,5,6), weight=1)
          
-         self.current_year = datetime.now().year
-         self.current_month = datetime.now().month
+        self.current_year = datetime.now().year
+        self.current_month = datetime.now().month
+
+        
+         
+#=================================== month 
+        header_frame = ctk.CTkFrame(
+            self.calendar_frame, 
+            fg_color="transparent")
+        header_frame.grid(row=0, column=0, columnspan=7, pady=10, sticky="w")
+        header_frame.grid_columnconfigure(0, weight=0)
+        header_frame.grid_columnconfigure(1, weight=0)
+        header_frame.grid_columnconfigure(3, weight=1)
+        header_frame.grid_columnconfigure(2, weight=1)
+        
+        self.today_btn = ctk.CTkButton(
+            header_frame,
+            text="Today",
+            width=90,
+            height=36,
+            corner_radius=18,   # half of height = oval shape
+            fg_color="#3B82F6",
+            hover_color="#2563EB",
+            text_color="white",
+            font=("Segoe UI", 14, "bold")
+        ).grid(row=0, column=3, padx=(15, 5))
+
+
+        
+        self.next_month_btn = ctk.CTkButton(
+            header_frame,
+            text="▶",
+            width=40,
+            height=40,
+            fg_color="transparent",
+            hover=False,
+            anchor="n",
+            text_color="#000000",
+            font=("Segoe UI", 20),
+        ).grid(row=0, column=5, padx=2)
+
+ 
+        self.prev_month= ctk.CTkButton(
+            header_frame,
+            text="◀",
+            width=40,
+            height=40,
+            fg_color="transparent",
+            hover=False,
+            anchor="n",
+            text_color="#000000",
+            font=("Segoe UI", 20),
+        ).grid(row=0, column=4, padx=(0,10))
+
+        self.months = ["January","February","March","April","May","June","July","August","September","October","November","December"]
+
+        
+        self.month_label = ctk.CTkLabel(
+            header_frame,
+            text=self.months[self.current_month - 1],
+            font=("Segoe UI", 20, "bold"),
+            text_color="#000000"
+        )
+
+        self.month_label.grid(row=0, column=6, padx=10)
 
    
-         
-#=================================== month drop down 
-         header_frame = ctk.CTkFrame(self.calendar_frame, fg_color="transparent")
-         header_frame.grid(row=0, column=0, columnspan=7, pady=10, sticky="w")
-         header_frame.grid_columnconfigure(0, weight=0)
-         header_frame.grid_columnconfigure(1, weight=0)
-        
+      
 
-         self.month_var = ctk.StringVar(value=calendar.month_name[self.current_month])
-         self.year_var = ctk.StringVar(value=str(self.current_year))
+        days = ["Mon", "Tue", "Wed", "Thu" , "Fri", "Sat", "Sun"]
 
-         month_menu = ctk.CTkOptionMenu(
-              header_frame,
-              values=list(calendar.month_name)[1:],
-              variable=self.month_var,
-              command=self.change_date
-              
-              
-         )
-         month_menu.grid(row=0, column=0, padx=5, pady=10)
-
-         year_menu = ctk.CTkOptionMenu(
-               header_frame,
-               values=[str(y) for y in range(self.current_year - 5, self.current_year + 6)],
-               variable=self.year_var,
-               width=80,
-               command=self.change_date
-            
-               
-         )
-
-         year_menu.grid(row=0, column=1, padx=5, pady=10)
-
-         days = ["Mon", "Tue", "Wed", "Thu" , "Fri", "Sat", "Sun"]
-
-         for col, day in enumerate(days):
+        for col, day in enumerate(days):
             lbl = ctk.CTkLabel(
                 self.calendar_frame,
                 text= day,
                 font=("Segoe UI", 12, "bold")
 
-            )
+            ).grid(row=1, column=col, pady=5)
 
-            lbl.grid(row=1, column=col, pady=5)
+     
 
 
-         cal = calendar.Calendar()
-         month_days = cal.monthdatescalendar(self.current_year, self.current_month)
+        cal = calendar.Calendar()
+        month_days = cal.monthdatescalendar(self.current_year, self.current_month)
 
-         for row, week in enumerate(month_days, start=2):
+        for row, week in enumerate(month_days, start=2):
             for col, day in enumerate(week):
 
                is_current = (day.month == self.current_month)
@@ -167,8 +196,6 @@ class SchedulingPage:
                )    
 
                btn.grid(row=row, column=col, padx=5, pady=5, sticky="nsew")
-               btn.bind("<Enter>", lambda e, d=day: self.start_hover(e, d))
-               btn.bind("<Leave>", self.hide_preview)
                btn.date = day
                self.day_buttons[(row, col)] = btn
                self.update_calendar()
@@ -234,106 +261,14 @@ class SchedulingPage:
                 fg_color=fg_color,
                 text_color=text_color
             )
-# hide if not hovered
-    def hide_preview(self, event):
 
-        if self.hover_after_id:
-            self.frame.after_cancel(self.hover_after_id)
-            self.hover_after_id = None
-
-        self.current_hover_day = None
-        self.current_hover_widget = None
-
-        if self.preview_frame and self.preview_frame.winfo_exists():
-            self.preview_frame.destroy()
-            self.preview_frame = None
-
-## hover / shown sched in date
-    def preview_sched(self, event, day):
-
-
-        text = "No schedule yet"
-
-        self.preview_frame = ctk.CTkFrame(
-            self.frame,
-            fg_color="#FFFFFF",
-            corner_radius=12,
-            border_width=1,
-            width=10,
-            height=10
-        )
-
-        btn = event.widget
-
-        x = btn.winfo_rootx() - self.frame.winfo_rootx()
-        y = btn.winfo_rooty() - self.frame.winfo_rooty()
-
-        preview_width = 200
-        preview_height = 90
-
-        frame_width = self.frame.winfo_width()
-
-        px = x + (btn.winfo_width() // 2) - (preview_width // 2)
-        py = y - preview_height - 10
-
-    
-        if px < 5:
-            px = 5
-
-     
-        if px + preview_width > frame_width:
-            px = frame_width - preview_width - 5
-
-    
-        if py < 5:
-            py = y + btn.winfo_height() + 10
-
-        self.preview_frame.place(x=px, y=py)
-
-    
-        title = ctk.CTkLabel(
-            self.preview_frame,
-            text=day.strftime("%B %d"),
-            font=("Segoe UI", 14, "bold")
-        )
-        title.grid(row=0, column=0, padx=10, pady=(8, 2), sticky="w")
-
-        content = ctk.CTkLabel(
-            self.preview_frame,
-            text=text,
-            wraplength=180,
-            justify="left",
-            text_color="#6B7280"
-        )
-        content.grid(row=1, column=0, padx=10, pady=(0, 10), sticky="w")
-
-# smotth start hover
-    def start_hover(self, event, day):
-
-        if self.hover_after_id:
-            self.frame.after_cancel(self.hover_after_id)
-            self.hover_after_id = None
-
-    
-        self.current_hover_day = day
-        self.current_hover_widget = event.widget
-
-    
-        self.hover_after_id = self.frame.after(
-            150,
-            lambda: self._show_preview_safe(event, day)
-        )
-# 
-    def _show_preview_safe(self, event, day):
-        if getattr(self, "current_hover_day", None) != day:
-            return
-
-        self.preview_sched(event, day)
 
 # create schedule window / for schedule window
 
-
+    
     def create_schedule(self, day):
+        if self.preview_frame and self.preview_frame.winfo_exists():
+                self.preview_frame.destroy()
 
 
         self.schedule_window = ctk.CTkFrame(
@@ -385,21 +320,26 @@ class SchedulingPage:
        
         date_form = ctk.CTkLabel(
         top_frame,
+        text_color="#000000",
         text=day.strftime("%B %d, %Y"),
         font=("Segoe UI", 20, "bold"),
-        text_color="#111827",
-        width=180
+        width=180,
+        
     )
 
         date_form.grid(
             row=0,
             column=0,
-            sticky="w"
+            sticky="w",
+            
         )
 #title Entry
         self.title_entry = ctk.CTkEntry(
             self.schedule_window,
-            placeholder_text="Title"
+            placeholder_text="Title",
+            fg_color="#FFFFFF",
+            text_color="#000000",
+            border_color="#E5E7EB"
 
         )
         self.title_entry.grid(
@@ -413,7 +353,10 @@ class SchedulingPage:
 # time entry
         self.time_entry = ctk.CTkEntry(
         self.schedule_window,
-        placeholder_text="Time (e.g. 3:00 PM)"
+        placeholder_text="Time (e.g. 3:00 PM)",
+        fg_color="#FFFFFF",
+        text_color="#000000",
+        border_color="#E5E7EB"
             )
 
         self.time_entry.grid(
@@ -439,6 +382,13 @@ class SchedulingPage:
             values=priority,
             variable=self.priority_var,
             state="readonly",
+            fg_color="#FFFFFF",
+            border_color="#E5E7EB",
+            button_color="#3B82F6",
+            text_color="#000000",
+            dropdown_fg_color="#FFFFFF",
+            dropdown_text_color="#111827",
+            dropdown_hover_color="#E5E7EB",
             hover=False,
             width=150
   
@@ -449,6 +399,13 @@ class SchedulingPage:
             values=category,
             variable=self.category_var,
             state="readonly",
+            fg_color="#FFFFFF",
+            border_color="#E5E7EB",
+            button_color="#3B82F6",
+            text_color="#000000",
+            dropdown_fg_color="#FFFFFF",
+            dropdown_text_color="#111827",
+            dropdown_hover_color="#E5E7EB",
             hover=False,
             width=150
 
