@@ -85,6 +85,7 @@ class SchedulingPage:
         self.calendar_frame = self.boxes["calendar"]
         self.calendar_frame.grid_rowconfigure((0,1,2,3,4,5,6,7,8,9), weight=1)
         self.calendar_frame.grid_columnconfigure((0,1,2,3,4,5,6), weight=1)
+        self.calendar_frame.grid_columnconfigure(0, weight=1)
          
         self.current_year = datetime.now().year
         self.current_month = datetime.now().month
@@ -94,55 +95,57 @@ class SchedulingPage:
         header_frame = ctk.CTkFrame(
             self.calendar_frame, 
             fg_color="transparent")
-        header_frame.grid(row=0, column=0, columnspan=7, pady=10, sticky="w")
+        header_frame.grid(row=0, column=0, columnspan=7, pady=10, sticky="ew")
         header_frame.grid_columnconfigure(0, weight=0)
         header_frame.grid_columnconfigure(1, weight=0)
-        header_frame.grid_columnconfigure(3, weight=1)
-        header_frame.grid_columnconfigure(2, weight=1)
+        header_frame.grid_columnconfigure(6, weight=1)
+       
         
         self.today_btn = ctk.CTkButton(
             header_frame,
             text="Today",
             width=90,
             height=36,
-            corner_radius=18,   # half of height = oval shape
+            corner_radius=18,   
             fg_color="#3B82F6",
             hover_color="#2563EB",
             text_color="white",
             font=("Segoe UI", 14, "bold"),
             command=self.go_to_today
-        ).grid(row=0, column=3, padx=(15, 5))
+        ).grid(row=0, column=0, padx=(15, 15), sticky="e")
 
-
+        
         
         self.next_month_btn = ctk.CTkButton(
             header_frame,
             text="▶",
-            width=40,
-            height=40,
+            width=1,
+            height=28,
             fg_color="transparent",
             hover=False,
             anchor="n",
             text_color="#000000",
-            font=("Segoe UI", 20),
+            font=("Segoe UI", 18),
             command=self.next_month
-        ).grid(row=0, column=6, padx=2)
+        ).grid(row=0, column=5)
 
 
 
 
-        self.prev_month= ctk.CTkButton(
+        self.prev_month = ctk.CTkButton(
             header_frame,
             text="◀",
-            width=40,
-            height=40,
+            width=1,
+            anchor="n",
+            height=28,
             fg_color="transparent",
             hover=False,
-            anchor="n",
             text_color="#000000",
-            font=("Segoe UI", 20),
+            font=("Segoe UI", 16),
             command=self.prev_month
-        ).grid(row=0, column=4, padx=(0,10))
+        ).grid(row=0, column=1, padx=(0,0))
+
+   
 
         self.months = ["January","February","March","April","May","June","July","August","September","October","November","December"]
 
@@ -151,10 +154,24 @@ class SchedulingPage:
             header_frame,
             text=self.months[self.current_month - 1],
             font=("Segoe UI", 20, "bold"),
+            width=200,
             text_color="#000000"
         )
 
-        self.month_label.grid(row=0, column=5, padx=10)
+        self.month_label.grid(row=0, column=3)
+
+
+        self.year_button = ctk.CTkButton(
+            header_frame,
+            text=str(self.current_year),
+            width=70,
+            text_color="#000000",
+            fg_color="transparent",
+            hover=False,
+            font=("Segoe UI", 20, "bold")
+        )
+
+        self.year_button.grid(row=0, column=8, padx=(0,10),sticky="w")
 
    
       
