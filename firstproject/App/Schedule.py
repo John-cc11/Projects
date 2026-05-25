@@ -78,6 +78,7 @@ class SchedulingPage:
 
 
 #====================== calendar 
+  
 
    
 
@@ -88,7 +89,6 @@ class SchedulingPage:
         self.current_year = datetime.now().year
         self.current_month = datetime.now().month
 
-        
          
 #=================================== month 
         header_frame = ctk.CTkFrame(
@@ -109,7 +109,8 @@ class SchedulingPage:
             fg_color="#3B82F6",
             hover_color="#2563EB",
             text_color="white",
-            font=("Segoe UI", 14, "bold")
+            font=("Segoe UI", 14, "bold"),
+            command=self.go_to_today
         ).grid(row=0, column=3, padx=(15, 5))
 
 
@@ -124,9 +125,12 @@ class SchedulingPage:
             anchor="n",
             text_color="#000000",
             font=("Segoe UI", 20),
-        ).grid(row=0, column=5, padx=2)
+            command=self.next_month
+        ).grid(row=0, column=6, padx=2)
 
- 
+
+
+
         self.prev_month= ctk.CTkButton(
             header_frame,
             text="◀",
@@ -137,6 +141,7 @@ class SchedulingPage:
             anchor="n",
             text_color="#000000",
             font=("Segoe UI", 20),
+            command=self.prev_month
         ).grid(row=0, column=4, padx=(0,10))
 
         self.months = ["January","February","March","April","May","June","July","August","September","October","November","December"]
@@ -149,7 +154,7 @@ class SchedulingPage:
             text_color="#000000"
         )
 
-        self.month_label.grid(row=0, column=6, padx=10)
+        self.month_label.grid(row=0, column=5, padx=10)
 
    
       
@@ -199,7 +204,46 @@ class SchedulingPage:
                btn.date = day
                self.day_buttons[(row, col)] = btn
                self.update_calendar()
-                  
+
+      #===================================== month func
+    def next_month(self):
+        self.current_month += 1
+
+        if self.current_month > 12:
+            self.current_month = 1
+        
+
+        self.month_label.configure(
+            text=self.months[self.current_month - 1]
+        
+        )
+        self.update_calendar()
+
+
+    def prev_month(self):
+        self.current_month -= 1
+
+        if self.current_month < 1:
+            self.current_month = 12
+
+        self.month_label.configure(
+            text=self.months[self.current_month - 1]
+        )   
+        self.update_calendar()
+
+
+    def go_to_today(self):
+
+        today = datetime.now()
+
+        self.current_month = today.month
+        self.current_year = today.year
+
+        self.month_label.configure(
+            text=self.months[self.current_month - 1]
+        )
+
+        self.update_calendar()          
 #
     def change_date(self, value):
 
