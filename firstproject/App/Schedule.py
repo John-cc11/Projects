@@ -39,10 +39,11 @@ class SchedulingPage:
 
          #================ calendar ==========
         sched_boxes = [
-            {"name": "calendar", "color": "#fdc8c8", "row": 1, "col": 2, "columnspan": 7, "rowspan": 6},
-            {"name": "schedule", "color": "#f1d9d9", "row": 1, "col": 0, "columnspan": 2, "rowspan": 6},
+            {"name": "calendar", "color": "#fdc8c8", "row": 1, "col": 1, "columnspan": 7, "rowspan": 6},
+            {"name": "schedule", "color": "#f1d9d9", "row": 1, "col": 0, "columnspan": 1, "rowspan": 6},
         ]
       
+        self.frame.grid_propagate(False)
 
         for b in sched_boxes:
                shadow = ctk.CTkFrame(
@@ -51,7 +52,7 @@ class SchedulingPage:
                   corner_radius=20
                )
                #lock 
-               self.frame.grid_propagate(False)
+              
 
 
                shadow.grid(
@@ -76,35 +77,314 @@ class SchedulingPage:
 
                self.boxes[b["name"]] = card
 #================================= schedule 
-        self.schedule_frame = self.boxes["schedule"]
-        self.schedule_frame.grid_rowconfigure((0,1,2,3,4,5,6,7,8,9), weight=1)
+        self.schedules = [
+            {
+                "title": "Math Homework",
+                "content": "Finish algebra exercises",
+                "date": "May 26, 2026",
+                "time": "8:00 PM",
+                "priority": "High",
+                "category": "School"
+            },
 
-        self.scrollable_frame = ctk.CTkFrame(self.canvas, fg_color="transparent")
+            {
+                "title": "Gym Workout",
+                "content": "Leg day training",
+                "date": "May 27, 2026",
+                "time": "6:00 AM",
+                "priority": "Medium",
+                "category": "Health"
+            },
+
+            {
+                "title": "Project Meeting",
+                "content": "Discuss app features",
+                "date": "May 28, 2026",
+                "time": "1:30 PM",
+                "priority": "Low",
+                "category": "Work"
+            },
+
+            {
+                "title": "Project Meeting",
+                "content": "Discuss app features",
+                "date": "May 28, 2026",
+                "time": "1:30 PM",
+                "priority": "Low",
+                "category": "Work"
+            },
+
+            {
+                "title": "Project Meeting",
+                "content": "Discuss app features",
+                "date": "May 28, 2026",
+                "time": "1:30 PM",
+                "priority": "Low",
+                "category": "Work"
+            },
+
+            {
+                "title": "Project Meeting",
+                "content": "Discuss app features",
+                "date": "May 28, 2026",
+                "time": "1:30 PM",
+                "priority": "Low",
+                "category": "Work"
+            }
+        ]
+
+        
+        # =========================================
+        # SCHEDULE FRAME
+        # =========================================
+
+        self.schedule_frame = self.boxes["schedule"]
+
+        # grid layout
+        self.schedule_frame.grid_rowconfigure(0, weight=1)
+        self.schedule_frame.grid_columnconfigure(0, weight=1)
+
+        # =========================================
+        # CANVAS
+        # =========================================
+
+        self.canvas = tk.Canvas(
+            self.schedule_frame,
+            highlightthickness=0,
+            bg="#F9FAFB"
+        )
+
+        self.canvas.grid(
+            row=0,
+            column=0,
+            sticky="nsew"
+        )
         
 
-      
-        self.canvas = tk.Canvas(self.schedule_frame, highlightthickness=0)
-        self.canvas.pack(side="left", fill="both", expand=True)
+        # =========================================
+        # SCROLLBAR
+        # =========================================
 
         self.scrollbar = ctk.CTkScrollbar(
             self.schedule_frame,
             orientation="vertical",
             command=self.canvas.yview
         )
-        self.scrollbar.pack(side="right", fill="y")
 
-      
-        self.canvas.configure(yscrollcommand=self.scrollbar.set)
+        self.scrollbar.grid(
+            row=0,
+            column=1,
+            sticky="ns"
+        )
+
+        self.canvas.configure(
+            yscrollcommand=self.scrollbar.set
+        )
+
+        # =========================================
+        # SCROLLABLE FRAME
+        # =========================================
+
+        self.scrollable_frame = ctk.CTkFrame(
+            self.canvas,
+            fg_color="transparent"
+        )
+
+        self.scrollable_frame.grid_columnconfigure(0, weight=1)
+
+        self.canvas_window = self.canvas.create_window(
+            (0, 0),
+            window=self.scrollable_frame,
+            anchor="nw"
+        )
+
+    
+        def on_frame_configure(event):
+
+            self.canvas.configure(
+                scrollregion=self.canvas.bbox("all")
+            )
+
+          
+
+        self.scrollable_frame.bind(
+            "<Configure>",
+            on_frame_configure
+        )
+        # =========================================
+# SMOOTH MOUSEWHEEL SCROLL
+# =========================================
+
+        self.scroll_animation = 0
+
+        def smooth_scroll():
+
+            if self.scroll_animation != 0:
+
+                self.canvas.yview_moveto(
+                    self.canvas.yview()[0] + (self.scroll_animation * 0.01)
+                )
+
+                self.scroll_animation *= 0.85
+
+            
+                if abs(self.scroll_animation) < 0.1:
+                    self.scroll_animation = 0
+                    return
+
+                self.frame.after(15, smooth_scroll)
+
+        def on_mousewheel(event):
+
+            delta = 0
+
+            if event.delta:
+                delta = event.delta / 120
+
+            self.scroll_animation += -delta * 1.5
+
+            smooth_scroll()
+
+        def bind_mousewheel(event):
+            self.canvas.bind("<MouseWheel>", on_mousewheel)
+
+        def unbind_mousewheel(event):
+            self.canvas.unbind("<MouseWheel>")
+
+        self.scrollable_frame.bind(
+            "<Enter>",
+            bind_mousewheel
+        )
+
+        self.scrollable_frame.bind(
+            "<Leave>",
+            unbind_mousewheel
+        )
 
 
 
+        # =========================================
+        # RESIZE INNER FRAME
+        # =========================================
+
+        def on_canvas_resize(event):
+            self.canvas.itemconfig(
+                self.canvas_window,
+                width=event.width
+            )
+            self.canvas.configure(
+                    scrollregion=self.canvas.bbox("all")
+                
+            )
+        self.canvas.bind(
+            "<Configure>",
+            on_canvas_resize
+        )
+
+        # =========================================
+        # SCHEDULE CARDS
+        # =========================================
+
+        for index, schedule in enumerate(self.schedules):
+
+            card = ctk.CTkFrame(
+                self.scrollable_frame,
+                fg_color="#FFFFFF",
+                corner_radius=15
+            )
+
+            card.grid(
+                row=index,
+                column=0,
+                sticky="ew",
+                padx=10,
+                pady=5
+            )
+
+            card.grid_columnconfigure(0, weight=1)
+
+            # ================= TITLE =================
+
+            title = ctk.CTkLabel(
+                card,
+                text=schedule["title"],
+                font=("Arial", 18, "bold")
+            )
+
+            title.grid(
+                row=0,
+                column=0,
+                sticky="w",
+                padx=10,
+                pady=(10, 0)
+            )
+
+            # ==================================
+            #               Content
+            # ==================================
+
+            content = ctk.CTkLabel(
+                card,
+                text=schedule["content"],
+                font=("Arial", 14),
+                text_color="gray"
+            )
+
+            content.grid(
+                row=1,
+                column=0,
+                sticky="w",
+                padx=10
+            )
+
+            # ==================================
+            #       DATE TIME
+            # ==================================
+
+            datetime_sched = ctk.CTkLabel(
+                card,
+                text=f'{schedule["date"]} • {schedule["time"]}',
+                font=("Arial", 12)
+            )
+
+            datetime_sched.grid(
+                row=2,
+                column=0,
+                sticky="w",
+                padx=10,
+                pady=(5, 0)
+            )
+
+            # ==================================
+            #                INFO 
+            # ==================================
+
+            info = ctk.CTkLabel(
+                card,
+                text=f'Priority: {schedule["priority"]} | Category: {schedule["category"]}',
+                font=("Arial", 12),
+                text_color="gray"
+            )
+
+            info.grid(
+                row=3,
+                column=0,
+                sticky="w",
+                padx=10,
+                pady=(0, 10)
+            ) 
+        card.bind("<MouseWheel>", on_mousewheel)
+        title.bind("<MouseWheel>", on_mousewheel)
+        content.bind("<MouseWheel>", on_mousewheel)
+        datetime_sched.bind("<MouseWheel>", on_mousewheel)
+        info.bind("<MouseWheel>", on_mousewheel)
 
 
 
-
-
-#====================== calendar 
-  
+        #==================================
+        #               calendar
+        #==================================
+        
 
    
 
@@ -117,7 +397,9 @@ class SchedulingPage:
         self.current_month = datetime.now().month
 
          
-#=================================== month 
+        #==================================
+        #           month
+        #==================================
         header_frame = ctk.CTkFrame(
         self.calendar_frame, 
         fg_color="transparent")
@@ -250,7 +532,10 @@ class SchedulingPage:
 
         
 
-      #===================================== month func
+      #=====================================
+      #         month func
+      #=====================================
+
     
 
 #------------------------------
@@ -355,8 +640,9 @@ class SchedulingPage:
                 text_color=text_color
             )
 
-
+#==========================================================================
 # create schedule window / for schedule window
+#=========================================================================
 
     
     def create_schedule(self, day):
@@ -426,7 +712,9 @@ class SchedulingPage:
             sticky="w",
             
         )
-#title Entry
+        #=====================================
+        #title Entry
+        #=====================================
         self.title_entry = ctk.CTkEntry(
             self.schedule_window,
             placeholder_text="Title",
@@ -442,8 +730,10 @@ class SchedulingPage:
             padx=15,
             pady=10,
             sticky="ew"
-        )   
-# time entry
+        )  
+        #===================================== 
+        # time entry
+        #=====================================
         self.time_entry = ctk.CTkEntry(
         self.schedule_window,
         placeholder_text="Time (e.g. 3:00 PM)",
@@ -462,8 +752,9 @@ class SchedulingPage:
         )
 
        
-
-# Priority &  category dropdown menu
+        #=====================================
+        # Priority &  category dropdown menu
+        #=====================================
         priority = ["-- Select Priority --", "Low", "Medium", "High", "Urgent"]
         category = ["-- Select Category --","School", "Work", "Personal", "Health", "Finance", "Other"]
 
@@ -520,8 +811,9 @@ class SchedulingPage:
             pady=5,
             sticky="w"
         )
-        
-                # ================= TEXTBOX =================
+        #=====================================
+              #  TEXTBOX 
+        #=====================================
 
 
         
@@ -545,8 +837,9 @@ class SchedulingPage:
 
 
 
-
-        # ================= SAVE BUTTON =================
+        #=====================================
+        #           SAVE BUTTON 
+        #=====================================
 
         save_btn = ctk.CTkButton(
             self.schedule_window,
@@ -584,7 +877,9 @@ class SchedulingPage:
             pady=(0, 15),
             sticky="w"
         )
-         # ================= CLOSE BUTTON =================
+        #=====================================
+         #          CLOSE BUTTON 
+         #=====================================
 
         close_btn = ctk.CTkButton(
             top_frame,
@@ -610,9 +905,6 @@ class SchedulingPage:
        
 
 
-
-#======================= <> bar 
-      
             
          
 
