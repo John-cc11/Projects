@@ -1,13 +1,14 @@
 import customtkinter as ctk
+import tkinter as tk
 import calendar
 from datetime import datetime
 import sys
 from pathlib import Path
 
 sys.path.append(str(Path(__file__).resolve().parent.parent))
-from Utils.json_shortcut import load_json, add_data,update_data, remove_data
+from Utils.database_func import load_schedule,delete_schedule,save_schedule
 
-data = load_json("sched.json")
+
 
 #===============================Scheduling 
 
@@ -19,13 +20,13 @@ class SchedulingPage:
         self.frame.grid_columnconfigure((0,1,2,3,4,5,6), weight=1)
         self.frame.grid_rowconfigure((0,1,2,3,4,5,6), weight=1)
 
-   
         self.day_buttons = {}
+        self.preview_frame = None
+
         self.boxes = {}
         self.today = datetime.now().date()
-         #for sched window
-        self.schedule_data = data if data else {}
 
+  
         self.Scheduling_label = ctk.CTkLabel(
             self.frame,
             text="Scheduling",
@@ -74,6 +75,31 @@ class SchedulingPage:
 
 
                self.boxes[b["name"]] = card
+#================================= schedule 
+        self.schedule_frame = self.boxes["schedule"]
+        self.schedule_frame.grid_rowconfigure((0,1,2,3,4,5,6,7,8,9), weight=1)
+
+        self.scrollable_frame = ctk.CTkFrame(self.canvas, fg_color="transparent")
+        
+
+      
+        self.canvas = tk.Canvas(self.schedule_frame, highlightthickness=0)
+        self.canvas.pack(side="left", fill="both", expand=True)
+
+        self.scrollbar = ctk.CTkScrollbar(
+            self.schedule_frame,
+            orientation="vertical",
+            command=self.canvas.yview
+        )
+        self.scrollbar.pack(side="right", fill="y")
+
+      
+        self.canvas.configure(yscrollcommand=self.scrollbar.set)
+
+
+
+
+
 
 
 
@@ -93,8 +119,8 @@ class SchedulingPage:
          
 #=================================== month 
         header_frame = ctk.CTkFrame(
-            self.calendar_frame, 
-            fg_color="transparent")
+        self.calendar_frame, 
+        fg_color="transparent")
         header_frame.grid(row=0, column=0, columnspan=7, pady=10, sticky="ew")
         header_frame.grid_columnconfigure(0, weight=0)
         header_frame.grid_columnconfigure(1, weight=0)
@@ -169,12 +195,12 @@ class SchedulingPage:
             fg_color="transparent",
             hover=False,
             font=("Segoe UI", 20, "bold")
+  
         )
-
+       
         self.year_button.grid(row=0, column=8, padx=(0,10),sticky="w")
 
-   
-      
+       
 
         days = ["Mon", "Tue", "Wed", "Thu" , "Fri", "Sat", "Sun"]
 
@@ -222,7 +248,13 @@ class SchedulingPage:
                self.day_buttons[(row, col)] = btn
                self.update_calendar()
 
+        
+
       #===================================== month func
+    
+
+#------------------------------
+
     def next_month(self):
         self.current_month += 1
 
@@ -520,6 +552,7 @@ class SchedulingPage:
             self.schedule_window,
             text="Save Schedule",
             height=30,
+            width=140,
             corner_radius=12,
             fg_color="#3B82F6",
             hover_color="#2563EB"
@@ -527,11 +560,29 @@ class SchedulingPage:
 
         save_btn.grid(
             row=5,
-            column=0,
-            columnspan=4,
+            column=1,
             padx=15,
             pady=(0, 15),
-            sticky="ew"
+            sticky="w"
+        )
+
+        delete_btn = ctk.CTkButton(
+            self.schedule_window,
+            text="Delete",
+            height=30,
+            width=140,
+            corner_radius=12,
+            fg_color="#3B82F6",
+            hover_color="#DC2626",
+        )
+           
+        
+        delete_btn.grid(
+            row=5,
+            column=0,
+            padx=15,
+            pady=(0, 15),
+            sticky="w"
         )
          # ================= CLOSE BUTTON =================
 

@@ -33,6 +33,8 @@ class App(ctk.CTk):
         #===== default frame ====
      
         self.resizable(True, True)
+
+        
         
 
      

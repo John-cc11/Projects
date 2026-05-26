@@ -13,7 +13,7 @@ cursor = conn.cursor()
 
 
 def load_schedule():
-   cursor.execute("""SELECT * FROM schedule""")
+   cursor.execute("""SELECT * FROM schedules""")
 
    return cursor.fetchall()
 
