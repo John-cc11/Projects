@@ -77,61 +77,19 @@ class SchedulingPage:
 
                self.boxes[b["name"]] = card
 #================================= schedule 
-        self.schedules = [
-            {
-                "title": "Math Homework",
-                "content": "Finish algebra exercises",
-                "date": "May 26, 2026",
-                "time": "8:00 PM",
-                "priority": "High",
-                "category": "School"
-            },
+        schedules = load_schedule()
 
-            {
-                "title": "Gym Workout",
-                "content": "Leg day training",
-                "date": "May 27, 2026",
-                "time": "6:00 AM",
-                "priority": "Medium",
-                "category": "Health"
-            },
+        self.schedule_dates = {}
 
-            {
-                "title": "Project Meeting",
-                "content": "Discuss app features",
-                "date": "May 28, 2026",
-                "time": "1:30 PM",
-                "priority": "Low",
-                "category": "Work"
-            },
+        for schedule in schedules:
 
-            {
-                "title": "Project Meeting",
-                "content": "Discuss app features",
-                "date": "May 28, 2026",
-                "time": "1:30 PM",
-                "priority": "Low",
-                "category": "Work"
-            },
+            id, title, content, date, time, priority, category, completed = schedule
 
-            {
-                "title": "Project Meeting",
-                "content": "Discuss app features",
-                "date": "May 28, 2026",
-                "time": "1:30 PM",
-                "priority": "Low",
-                "category": "Work"
-            },
+            if date not in self.schedule_dates:
+                self.schedule_dates[date] = 0
 
-            {
-                "title": "Project Meeting",
-                "content": "Discuss app features",
-                "date": "May 28, 2026",
-                "time": "1:30 PM",
-                "priority": "Low",
-                "category": "Work"
-            }
-        ]
+            self.schedule_dates[date] += 1
+       
 
         
         # =========================================
@@ -285,7 +243,10 @@ class SchedulingPage:
         # SCHEDULE CARDS
         # =========================================
 
-        for index, schedule in enumerate(self.schedules):
+        for index, schedule in enumerate(schedules):
+            id, title, content, date, time, priority, category, completed = schedule
+
+            
 
             card = ctk.CTkFrame(
                 self.scrollable_frame,
@@ -307,7 +268,7 @@ class SchedulingPage:
 
             title = ctk.CTkLabel(
                 card,
-                text=schedule["title"],
+                text=title,
                 font=("Arial", 18, "bold")
             )
 
@@ -325,7 +286,7 @@ class SchedulingPage:
 
             content = ctk.CTkLabel(
                 card,
-                text=schedule["content"],
+                text=content,
                 font=("Arial", 14),
                 text_color="gray"
             )
@@ -343,7 +304,7 @@ class SchedulingPage:
 
             datetime_sched = ctk.CTkLabel(
                 card,
-                text=f'{schedule["date"]} • {schedule["time"]}',
+                text=f'{date} • {time}',
                 font=("Arial", 12)
             )
 
@@ -361,7 +322,7 @@ class SchedulingPage:
 
             info = ctk.CTkLabel(
                 card,
-                text=f'Priority: {schedule["priority"]} | Category: {schedule["category"]}',
+                text=f'Priority: {priority} | Category: {category}',
                 font=("Arial", 12),
                 text_color="gray"
             )
@@ -373,11 +334,12 @@ class SchedulingPage:
                 padx=10,
                 pady=(0, 10)
             ) 
-        card.bind("<MouseWheel>", on_mousewheel)
-        title.bind("<MouseWheel>", on_mousewheel)
-        content.bind("<MouseWheel>", on_mousewheel)
-        datetime_sched.bind("<MouseWheel>", on_mousewheel)
-        info.bind("<MouseWheel>", on_mousewheel)
+            card.bind("<MouseWheel>", on_mousewheel)
+            title.bind("<MouseWheel>", on_mousewheel)
+            content.bind("<MouseWheel>", on_mousewheel)
+            datetime_sched.bind("<MouseWheel>", on_mousewheel)
+            info.bind("<MouseWheel>", on_mousewheel)
+            
 
 
 
@@ -634,11 +596,22 @@ class SchedulingPage:
                 fg_color = "#E5E7EB"
                 text_color = "#9CA3AF"
 
+            formatted_day = day.strftime("%B %d, %Y")
+
+            count = self.schedule_dates.get(formatted_day, 0)
+
+            display_text = str(day.day)
+
+            if count > 0:
+                display_text = f"{day.day}\n• {count}"
+
             btn.configure(
-                text=str(day.day),
+                text=display_text,
                 fg_color=fg_color,
                 text_color=text_color
             )
+
+           
 
 #==========================================================================
 # create schedule window / for schedule window
@@ -681,12 +654,12 @@ class SchedulingPage:
         self.schedule_window.grid_rowconfigure(4, weight=1)
         self.schedule_window.grid_rowconfigure(5, weight=0) 
 
-        top_frame = ctk.CTkFrame(
+        self.top_frame = ctk.CTkFrame(
         self.schedule_window,
         fg_color="transparent"
     )
 
-        top_frame.grid(
+        self.top_frame.grid(
             row=0,
             column=0,
             columnspan=2,
@@ -695,10 +668,10 @@ class SchedulingPage:
             pady=(15, 10)
         )
 
-        top_frame.grid_columnconfigure(0, weight=1)
+        self.top_frame.grid_columnconfigure(0, weight=1)
        
-        date_form = ctk.CTkLabel(
-        top_frame,
+        self.date_form = ctk.CTkLabel(
+        self.top_frame,
         text_color="#000000",
         text=day.strftime("%B %d, %Y"),
         font=("Segoe UI", 20, "bold"),
@@ -706,7 +679,7 @@ class SchedulingPage:
         
     )
 
-        date_form.grid(
+        self.date_form.grid(
             row=0,
             column=0,
             sticky="w",
@@ -761,7 +734,7 @@ class SchedulingPage:
         self.priority_var = ctk.StringVar(value=priority[0])
         self.category_var = ctk.StringVar(value=category[0])
 
-        priority_menu = ctk.CTkComboBox(
+        self.priority_menu = ctk.CTkComboBox(
             self.schedule_window,
             values=priority,
             variable=self.priority_var,
@@ -778,7 +751,7 @@ class SchedulingPage:
   
         )
 
-        category_menu = ctk.CTkComboBox(
+        self.category_menu = ctk.CTkComboBox(
             self.schedule_window,
             values=category,
             variable=self.category_var,
@@ -795,7 +768,7 @@ class SchedulingPage:
 
         )
 
-        priority_menu.grid(
+        self.priority_menu.grid(
             row=3,
             column=0,
             padx=(15, 5),
@@ -803,7 +776,7 @@ class SchedulingPage:
             sticky="w"
         )
 
-        category_menu.grid(
+        self.category_menu.grid(
             row=3,
             column=0,
             padx=(180, 15),
@@ -834,7 +807,8 @@ class SchedulingPage:
                 sticky="nsew"
         )
         
-
+    
+    
 
 
         #=====================================
@@ -842,14 +816,17 @@ class SchedulingPage:
         #=====================================
 
         save_btn = ctk.CTkButton(
+
             self.schedule_window,
             text="Save Schedule",
             height=30,
             width=140,
             corner_radius=12,
             fg_color="#3B82F6",
-            hover_color="#2563EB"
-        )
+            hover_color="#2563EB",
+            command=self.save_sched
+            )
+        
 
         save_btn.grid(
             row=5,
@@ -882,7 +859,7 @@ class SchedulingPage:
          #=====================================
 
         close_btn = ctk.CTkButton(
-            top_frame,
+            self.top_frame,
             text="✕",
             width=35,
             height=35,
@@ -900,6 +877,22 @@ class SchedulingPage:
             sticky="e",
             padx=(0, 5)
         )
+
+
+
+    def save_sched(self):
+            time = self.time_entry.get()
+            title    =  self.title_entry.get()
+            priority = self.priority_menu.get()
+            category  = self.category_menu.get()
+            schedule = self.schedule_textbox.get("1.0", "end-1c")
+            date = self.date_form.cget("text")
+
+
+            save_schedule(None,title,schedule,date,time,priority,category, False)
+    
+        
+    
             
 
        

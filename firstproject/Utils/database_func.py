@@ -50,12 +50,12 @@ def create_schedule_db(title, content, date, time, priority, category, completed
 def save_schedule(schedule_id, title, content, date, time, priority, category, completed):
 
     if schedule_id is None:
-        # CREATE NEW
+        
         create_schedule_db(title, content, date, time, priority, category, completed)
         
 
     else:
-        # UPDATE EXISTING
+      
         update_schedule(schedule_id, title, content, date, time, priority, category, completed)
         
 
